@@ -1,0 +1,22 @@
+### (US_021) Yêu cầu Đăng nhập
+# @name loginRequest
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@bluemoon.com",
+    "password": "password123"
+}
+
+### (US_001) Yêu cầu Tạo Cư dân Mới (Cần Token)
+# @name createResident
+POST http://localhost:3000/api/residents
+Content-Type: application/json
+# Dòng này sẽ tự động lấy token từ kết quả của yêu cầu 'loginRequest'
+Authorization: Bearer {{loginRequest.response.body.token}}
+
+{
+    "fullName": "Nguyễn Văn A",
+    "apartmentNumber": "101",
+    "phoneNumber": "0909123456"
+}
