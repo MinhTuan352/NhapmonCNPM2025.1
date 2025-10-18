@@ -1,12 +1,12 @@
 // File: backend/config/db.js
 const mysql = require('mysql2/promise');
 
-// Sử dụng connection pool để quản lý kết nối hiệu quả hơn
+// Sử dụng connection pool để quản lý kết nối hiệu quả
 const pool = mysql.createPool({
-    host: 'localhost', // Thay bằng host của bạn
-    user: 'root',      // Thay bằng user của bạn
-    password: 'password', // Thay bằng password của bạn
-    database: 'bluemoon_db', // Thay bằng tên database của bạn
+    host: 'localhost',
+    user: 'root',
+    password: 'password',
+    database: 'bluemoon_db',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
