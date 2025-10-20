@@ -7,7 +7,7 @@ const mysql = require('mysql2/promise');
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    password: 'password',
+    password: '',
     multipleStatements: true
 };
 const dbName = 'bluemoon_db';
@@ -29,7 +29,7 @@ async function setupDatabase() {
 
         // 3. Đọc nội dung từ file init.sql
         console.log('Đang đọc file init.sql...');
-        const sqlFilePath = path.join(__dirname, '..', 'database', 'init.sql');
+        const sqlFilePath = path.join(__dirname, '..', '..', 'database', 'init.sql');
         const sqlScript = fs.readFileSync(sqlFilePath, 'utf8');
 
         // 4. Thực thi toàn bộ kịch bản SQL

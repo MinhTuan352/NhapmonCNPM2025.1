@@ -1,4 +1,6 @@
 // File: backend/controllers/authController.js
+require('dotenv').config();
+
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -26,7 +28,8 @@ exports.login = async (req, res) => {
             email: user.email,
             role: user.role_name
         };
-        const token = jwt.sign(payload, 'YOUR_SECRET_KEY', { expiresIn: '1h' }); // Thay 'YOUR_SECRET_KEY'
+        console.log('>>> [Controller] JWT_SECRET đang dùng để TẠO token:', process.env.JWT_SECRET);
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.json({ message: 'Đăng nhập thành công!', token });
 

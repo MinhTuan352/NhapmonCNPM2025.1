@@ -6,7 +6,7 @@ const User = {
     // Tìm một user bằng email
     findByEmail: async (email) => {
         const [rows] = await db.execute('SELECT users.*, roles.name as role_name FROM users JOIN roles ON users.role_id = roles.id WHERE email =?', [email]);
-        return rows;
+        return rows[0];
     },
 
     // Tạo một user mới (dùng cho Admin)

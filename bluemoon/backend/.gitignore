@@ -1,0 +1,17 @@
+# Dependencies - Thư mục chứa các thư viện đã cài đặt
+# Thư mục này sẽ được tự động tạo lại khi chạy `npm install`
+node_modules/
+
+# Environment Variables (Sau này đi làm hẵng cho vào .gitignore)
+# .env
+
+# Log files
+*.log
+npm-debug.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.vscode/

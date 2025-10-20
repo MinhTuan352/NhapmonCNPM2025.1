@@ -8,7 +8,7 @@ exports.createResident = async (req, res) => {
         // Lấy ID của người dùng Admin đang đăng nhập từ token (sẽ được middleware thêm vào)
         const createdBy = req.user.id; 
 
-        const newResident = await Resident.create({ fullName, apartmentNumber, phoneNumber, createdBy });
+        const newResident = await Resident.create({ fullName, apartmentNumber, phoneNumber, createdBy: req.user.id });
         res.status(201).json({ message: 'Tạo hồ sơ cư dân thành công!', resident: newResident });
 
     } catch (error) {
