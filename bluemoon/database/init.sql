@@ -3,7 +3,7 @@
 -- Bảng lưu các vai trò trong hệ thống (US_020)
 CREATE TABLE IF NOT EXISTS roles (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE -- 'Admin', 'Kế toán', 'Cư dân'
+    name VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- Bảng lưu thông tin tài khoản người dùng (US_020, US_021)
@@ -28,8 +28,18 @@ CREATE TABLE IF NOT EXISTS residents (
     FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
+-- Bảng lưu lịch sử đăng nhập (US_021)
+CREATE TABLE login_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 -- Chèn dữ liệu vai trò ban đầu
-INSERT INTO roles (name) VALUES ('Admin'), ('Kế toán'), ('Cư dân');
+INSERT INTO roles (name) VALUES ('Admin'), ('Kế toán'), ('Cư dân'), ('Cơ quan chức năng');
 
 -- Chèn tài khoản Admin test
 -- Mật khẩu: password123 (đã hash bằng bcrypt)

@@ -1,4 +1,10 @@
-### (US_021) Yêu cầu Đăng nhập
+# File: requests.http (PHIÊN BẢN HOÀN CHỈNH)
+
+# ==================================================
+# BƯỚC 1: LẤY TOKEN (ROUTE CÔNG KHAI)
+# ==================================================
+
+### (US_021) Yêu cầu Đăng nhập tài khoản Admin để lấy Token
 # @name loginRequest
 POST http://localhost:3000/api/auth/login
 Content-Type: application/json
@@ -8,15 +14,51 @@ Content-Type: application/json
     "password": "password123"
 }
 
-### (US_001) Yêu cầu Tạo Cư dân Mới (Cần Token)
-# @name createResident
-POST http://localhost:3000/api/residents
+
+### ==================================================
+# BƯỚC 2: SỬ DỤNG TOKEN (CÁC ROUTE ĐƯỢC BẢO VỆ)
+# Luôn chạy yêu cầu Đăng nhập ở trên trước khi chạy các yêu cầu dưới đây.
+# ==================================================
+
+### (US_021) Yêu cầu Đổi mật khẩu (Cho Admin)
+# @name changePasswordRequest
+POST http://localhost:3000/api/auth/change-password
 Content-Type: application/json
-# Dòng này sẽ tự động lấy token từ kết quả của yêu cầu 'loginRequest'
 Authorization: Bearer {{loginRequest.response.body.token}}
 
 {
-    "fullName": "Nguyễn Văn A",
-    "apartmentNumber": "101",
-    "phoneNumber": "0909123456"
+    "oldPassword": "newPassword456",
+    "newPassword": "password123"
+}
+
+### (US_021) Yêu cầu Xem lịch sử đăng nhập
+# @name getLoginHistoryRequest
+GET http://localhost:3000/api/auth/login-history
+Authorization: Bearer {{loginRequest.response.body.token}}
+
+### (US_021) Yêu cầu Đăng xuất
+# @name logoutRequest
+POST http://localhost:3000/api/auth/logout
+Authorization: Bearer {{loginRequest.response.body.token}}
+
+### (US_020) Yêu cầu Admin tạo một tài khoản mới (ví dụ: cho Kế toán)
+# @name adminCreateUserRequest
+POST http://localhost:3000/api/auth/users
+Content-Type: application/json
+Authorization: Bearer {{loginRequest.response.body.token}}
+
+{
+    "email": "ketoan01@bluemoon.com",
+    "fullName": "Kế Toán Viên 01",
+    "roleId": 2 
+}
+
+### (US_021) Yêu cầu Đăng nhập tài khoản Kế toán mới tạo
+# @name ketoanLoginRequest
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "ketoan01@bluemoon.com",
+    "password": "12345678"
 }
