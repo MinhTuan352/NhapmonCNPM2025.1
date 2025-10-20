@@ -27,7 +27,7 @@ Content-Type: application/json
 Authorization: Bearer {{loginRequest.response.body.token}}
 
 {
-    "oldPassword": "newPassword456",
+    "oldPassword": "password123",
     "newPassword": "password123"
 }
 
