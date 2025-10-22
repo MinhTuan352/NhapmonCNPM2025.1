@@ -86,10 +86,40 @@ exports.createUser = async (req, res) => {
     }
 };
 
-// US_021: Lấy lịch sử đăng nhập của user
+// US_021: Lấy lịch sử đăng nhập của user (dành cho User)
 exports.getLoginHistory = async (req, res) => {
     try {
-        res.json({message: 'Lấy lịch sử đăng nhập thành công!', data: []});
+        const userId = req.user.id; // Lấy từ token đã xác thực
+        const history = await User.getLoginHistory(userId);
+        res.json({message: 'Lấy lịch sử đăng nhập thành công!', data: history});
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi server', error: error.message });
+    }
+};
+
+// US_021: Lấy lịch sử đăng nhập của một user cụ thể (chỉ Admin được làm)
+exports.getLoginHistoryForUser = async (req, res) => {
+    try {
+        const userId = req.params.userid;
+        // Kiểm tra xem user có tồn tại không
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'Không tìm thấy người dùng.' });
+        }
+        const history = await User.getLoginHistoryForUser(userId);
+        res.json({message: `Lấy lịch sử đăng nhập của user ID ${userId} thành công!`,
+            user: { id: user.id, email: user.email, fullName: user.full_name },
+            data: history});
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi server', error: error.message });
+    }
+};
+
+// US_021: Lấy lịch sử đăng nhập của tất cả user (chỉ Admin được làm)
+exports.getAllLoginHistory = async (req, res) => {
+    try {
+        const history = await User.getAllLoginHistory();
+        res.json({message: 'Lấy lịch sử đăng nhập của tất cả user thành công!', total: history.length, data: history});
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server', error: error.message });
     }

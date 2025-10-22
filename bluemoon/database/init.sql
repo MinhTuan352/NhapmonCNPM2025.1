@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS residents (
 );
 
 -- Bảng lưu lịch sử đăng nhập (US_021)
-CREATE TABLE login_history (
+CREATE TABLE IF NOT EXISTS login_history (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

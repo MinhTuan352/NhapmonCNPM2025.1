@@ -5,13 +5,21 @@ const bcrypt = require('bcryptjs');
 const User = {
     // Tìm một user bằng email
     findByEmail: async (email) => {
-        const [rows] = await db.execute('SELECT users.*, roles.name as role_name FROM users JOIN roles ON users.role_id = roles.id WHERE email =?', [email]);
+        const [rows] = await db.execute(
+            `SELECT users.*, roles.name as role_name
+            FROM users
+            JOIN roles ON users.role_id = roles.id
+            WHERE email =?`, [email]);
         return rows[0];
     },
 
     // Tìm một user bằng ID
     findById: async (id) => {
-        const [rows] = await db.execute('SELECT users.*, roles.name as role_name FROM users JOIN roles ON users.role_id = roles.id WHERE users.id =?', [id]);
+        const [rows] = await db.execute(
+            `SELECT users.*, roles.name as role_name
+            FROM users
+            JOIN roles ON users.role_id = roles.id
+            WHERE users.id =?`, [id]);
         return rows[0];
     },
 
@@ -35,6 +43,42 @@ const User = {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
         await db.execute('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, id]);
+    },
+
+    // Lấy lịch sử đăng nhập của user
+    getLoginHistory: async (userId) => {
+        const [rows] = await db.execute(
+            `SELECT lh.id, lh.user_id, u.full_name, u.email, lh.login_time, lh.ip_address, lh.user_agent
+            FROM login_history lh
+            JOIN users u ON lh.user_id = u.id
+            WHERE lh.user_id = ?
+            ORDER BY lh.login_time DESC`,
+            [userId]);
+        return rows;
+    },
+
+    // Lấy lịch sử đăng nhập của một user cụ thể (dùng cho Admin)
+    getLoginHistoryForUser: async (userId) => {
+        const [rows] = await db.execute(
+            `SELECT lh.id, lh.user_id, u.full_name, u.email, lh.login_time, lh.ip_address, lh.user_agent
+            FROM login_history lh
+            JOIN users u ON lh.user_id = u.id
+            WHERE lh.user_id = ?
+            ORDER BY lh.login_time DESC`,
+            [userId]);
+        return rows;
+    },
+
+    // Lấy lịch sử đăng nhập của tất cả user
+    getAllLoginHistory: async () => {
+        const [rows] = await db.execute(
+            `SELECT lh.id, lh.user_id, u.full_name, u.email, r.name as role_name, lh.login_time, lh.ip_address, lh.user_agent
+            FROM login_history lh
+            JOIN users u ON lh.user_id = u.id
+            JOIN roles r ON u.role_id = r.id
+            ORDER BY lh.login_time DESC`
+        );
+        return rows;
     },
 
     // Ghi nhận lịch sử đăng nhập

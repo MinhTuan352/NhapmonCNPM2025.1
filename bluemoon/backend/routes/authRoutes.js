@@ -16,13 +16,19 @@ router.post('/login', authController.login);
 router.post('/change-password', checkAuth, authController.changePassword);
 
 // API cho user xem lịch sử đăng nhập của mình (US_021)
-router.get('/login-history', checkAuth, authController.getLoginHistory);
+router.get('/login-history/me', checkAuth, authController.getLoginHistory);
 
 // API cho user đăng xuất (US_021)
 router.post('/logout', checkAuth, authController.logout);
 
 // Routes cho admin
 // API tạo user mới (Chỉ Admin được phép)
-router.post('/users', checkAuth, checkRole(['Admin']), authController.createUser);
+router.post('/users', checkAuth, checkRole('Admin'), authController.createUser);
+
+// API cho admin xem lịch sử đăng nhập của tất cả user
+router.get('/login-history/all', checkAuth, checkRole('Admin'), authController.getAllLoginHistory);
+
+// API cho admin xem lịch sử đăng nhập của 1 user cụ thể
+router.get('/login-history/:userid', checkAuth, checkRole('Admin'), authController.getLoginHistoryForUser);
 
 module.exports = router;

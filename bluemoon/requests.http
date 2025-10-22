@@ -1,7 +1,7 @@
-# File: requests.http (PHIÊN BẢN HOÀN CHỈNH)
+# File: requests.http
 
 # ==================================================
-# BƯỚC 1: LẤY TOKEN (ROUTE CÔNG KHAI)
+# 1: KIỂM THỬ VỚI VAI TRÒ ADMIN
 # ==================================================
 
 ### (US_021) Yêu cầu Đăng nhập tài khoản Admin để lấy Token
@@ -14,13 +14,7 @@ Content-Type: application/json
     "password": "password123"
 }
 
-
-### ==================================================
-# BƯỚC 2: SỬ DỤNG TOKEN (CÁC ROUTE ĐƯỢC BẢO VỆ)
-# Luôn chạy yêu cầu Đăng nhập ở trên trước khi chạy các yêu cầu dưới đây.
-# ==================================================
-
-### (US_021) Yêu cầu Đổi mật khẩu (Cho Admin)
+### (US_021) Yêu cầu Đổi mật khẩu
 # @name changePasswordRequest
 POST http://localhost:3000/api/auth/change-password
 Content-Type: application/json
@@ -31,29 +25,50 @@ Authorization: Bearer {{loginRequest.response.body.token}}
     "newPassword": "password123"
 }
 
-### (US_021) Yêu cầu Xem lịch sử đăng nhập
-# @name getLoginHistoryRequest
-GET http://localhost:3000/api/auth/login-history
+### (US_021) Yêu cầu xem lịch sử đăng nhập của một user cụ thể
+# @name getLoginHistoryForUser
+GET http://localhost:3000/api/auth/login-history/2
 Authorization: Bearer {{loginRequest.response.body.token}}
 
-### (US_021) Yêu cầu Đăng xuất
-# @name logoutRequest
-POST http://localhost:3000/api/auth/logout
+### (US_021) Yêu cầu xem lịch sử đăng nhập của tất cả các user
+# @name getAllLoginHistoryRequest
+GET http://localhost:3000/api/auth/login-history/all
 Authorization: Bearer {{loginRequest.response.body.token}}
 
-### (US_020) Yêu cầu Admin tạo một tài khoản mới (ví dụ: cho Kế toán)
+### (US_020) Yêu cầu Admin tạo một tài khoản mới
 # @name adminCreateUserRequest
 POST http://localhost:3000/api/auth/users
 Content-Type: application/json
 Authorization: Bearer {{loginRequest.response.body.token}}
 
 {
-    "email": "ketoan01@bluemoon.com",
-    "fullName": "Kế Toán Viên 01",
-    "roleId": 2 
+    "email": "cudan01@bluemoon.com",
+    "fullName": "Cư dân 01",
+    "roleId": 3 
 }
 
-### (US_021) Yêu cầu Đăng nhập tài khoản Kế toán mới tạo
+### (US_001) Yêu cầu tạo hồ sơ cư dân
+# @name createResidentProfileRequest
+POST http://localhost:3000/api/residents
+Content-Type: application/json
+Authorization: Bearer {{loginRequest.response.body.token}}
+
+{
+    "fullName": "Nguyễn Văn A",
+    "apartmentNumber": "101",
+    "phoneNumber": "0909123456"
+}
+
+### (US_021) Yêu cầu Đăng xuất
+# @name logoutRequest
+POST http://localhost:3000/api/auth/logout
+Authorization: Bearer {{loginRequest.response.body.token}}
+
+### ==================================================
+# 2: KIỂM THỬ VỚI VAI TRÒ USER
+# ==================================================
+
+### (US_021) Yêu cầu Đăng nhập tài khoản mới tạo (ở đây là Kế toán)
 # @name ketoanLoginRequest
 POST http://localhost:3000/api/auth/login
 Content-Type: application/json
@@ -61,4 +76,25 @@ Content-Type: application/json
 {
     "email": "ketoan01@bluemoon.com",
     "password": "12345678"
+}
+
+### (US_021) Yêu cầu xem lịch sử đăng nhập (dành cho User)
+# @name getMyLoginHistory
+GET http://localhost:3000/api/auth/login-history/me
+Authorization: Bearer {{ketoanLoginRequest.response.body.token}}
+
+### (US_021) Yêu cầu Đăng xuất
+# @name logoutRequest
+POST http://localhost:3000/api/auth/logout
+Authorization: Bearer {{ketoanLoginRequest.response.body.token}}
+
+### (US_021) Yêu cầu Đổi mật khẩu (Cho User)
+# @name changePasswordRequest
+POST http://localhost:3000/api/auth/change-password
+Content-Type: application/json
+Authorization: Bearer {{ketoanLoginRequest.response.body.token}}
+
+{
+    "oldPassword": "12345678",
+    "newPassword": "12345678"
 }
