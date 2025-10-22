@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 
 export default function MainLayout() {
   // Lấy chiều rộng của Sidebar (ví dụ: 240px)
-  const drawerWidth = 240; 
+  // const drawerWidth = 240; 
 
   return (
     <Box sx={{ display: 'flex' }}>

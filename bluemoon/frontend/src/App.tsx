@@ -1,10 +1,12 @@
 // src/App.tsx
 import AppRoutes from './routes';
+import { AuthProvider } from './contexts/AuthContext'; // Import
 
 function App() {
-   //(Sau này bạn sẽ thêm AuthProvider ở đây)
   return (
-    <AppRoutes />
+    <AuthProvider> {/* Bọc ở đây */}
+      <AppRoutes />
+    </AuthProvider>
   );
 }
 
