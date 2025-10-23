@@ -2,6 +2,8 @@
 require('dotenv').config();
 
 const express = require('express');
+const cors = require('cors');
+
 const app = express();
 const port = 3000;
 
@@ -10,6 +12,7 @@ const authRoutes = require('./routes/authRoutes');
 const residentRoutes = require('./routes/residentRoutes');
 
 // Middleware để đọc JSON từ request body
+app.use(cors());
 app.use(express.json());
 
 // Sử dụng các routes

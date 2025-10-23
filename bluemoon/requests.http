@@ -1,57 +1,49 @@
 # File: requests.http
+# Biến @host dùng chung cho tất cả request
+@host = http://localhost:3000
 
 # ==================================================
-# 1: KIỂM THỬ VỚI VAI TRÒ ADMIN
+# KỊCH BẢN 1: VAI TRÒ ADMIN
 # ==================================================
 
-### (US_021) Yêu cầu Đăng nhập tài khoản Admin để lấy Token
-# @name loginRequest
-POST http://localhost:3000/api/auth/login
+### (Admin) 1.1: Đăng nhập tài khoản Admin
+# @name loginAdmin
+POST {{host}}/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "admin@bluemoon.com",
+    "username": "admin",
     "password": "password123"
 }
+###
+# Lưu token của Admin vào biến adminToken
+@adminToken = {{loginAdmin.response.body.token}}
 
-### (US_021) Yêu cầu Đổi mật khẩu
-# @name changePasswordRequest
-POST http://localhost:3000/api/auth/change-password
+### (Admin) 1.2: Tạo tài khoản Kế toán (Chỉ Admin làm được)
+# @name createKetoan
+POST {{host}}/api/auth/users
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
-Authorization: Bearer {{loginRequest.response.body.token}}
 
 {
-    "oldPassword": "password123",
-    "newPassword": "password123"
+    "username": "ketoan01",
+    "fullName": "Kế toán 01",
+    "roleId": 2
 }
 
-### (US_021) Yêu cầu xem lịch sử đăng nhập của một user cụ thể
-# @name getLoginHistoryForUser
-GET http://localhost:3000/api/auth/login-history/2
-Authorization: Bearer {{loginRequest.response.body.token}}
+### (Admin) 1.3: Xem lịch sử đăng nhập TẤT CẢ user (Chỉ Admin làm được)
+GET {{host}}/api/auth/login-history/all
+Authorization: Bearer {{adminToken}}
 
-### (US_021) Yêu cầu xem lịch sử đăng nhập của tất cả các user
-# @name getAllLoginHistoryRequest
-GET http://localhost:3000/api/auth/login-history/all
-Authorization: Bearer {{loginRequest.response.body.token}}
+### (Admin) 1.4: Xem lịch sử đăng nhập của user Kế toán (ID = 2)
+# Giả sử tài khoản 'ketoan01' vừa tạo có ID = 2
+GET {{host}}/api/auth/login-history/2
+Authorization: Bearer {{adminToken}}
 
-### (US_020) Yêu cầu Admin tạo một tài khoản mới
-# @name adminCreateUserRequest
-POST http://localhost:3000/api/auth/users
+### (Admin) 1.5: Tạo hồ sơ cư dân (Chỉ Admin làm được)
+POST {{host}}/api/residents
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
-Authorization: Bearer {{loginRequest.response.body.token}}
-
-{
-    "email": "cudan01@bluemoon.com",
-    "fullName": "Cư dân 01",
-    "roleId": 3 
-}
-
-### (US_001) Yêu cầu tạo hồ sơ cư dân
-# @name createResidentProfileRequest
-POST http://localhost:3000/api/residents
-Content-Type: application/json
-Authorization: Bearer {{loginRequest.response.body.token}}
 
 {
     "fullName": "Nguyễn Văn A",
@@ -59,42 +51,70 @@ Authorization: Bearer {{loginRequest.response.body.token}}
     "phoneNumber": "0909123456"
 }
 
-### (US_021) Yêu cầu Đăng xuất
-# @name logoutRequest
-POST http://localhost:3000/api/auth/logout
-Authorization: Bearer {{loginRequest.response.body.token}}
-
-### ==================================================
-# 2: KIỂM THỬ VỚI VAI TRÒ USER
+# ==================================================
+# KỊCH BẢN 2: VAI TRÒ KẾ TOÁN (KHÔNG PHẢI ADMIN)
 # ==================================================
 
-### (US_021) Yêu cầu Đăng nhập tài khoản mới tạo (ở đây là Kế toán)
-# @name ketoanLoginRequest
-POST http://localhost:3000/api/auth/login
+### (Kế toán) 2.1: Đăng nhập tài khoản Kế toán
+# (Dùng tài khoản đã được Admin tạo ở bước 1.2, mật khẩu mặc định là 12345678)
+# @name loginKetoan
+POST {{host}}/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "ketoan01@bluemoon.com",
+    "username": "ketoan01",
     "password": "12345678"
 }
+###
+# Lưu token của Kế toán vào biến ketoanToken
+@ketoanToken = {{loginKetoan.response.body.token}}
 
-### (US_021) Yêu cầu xem lịch sử đăng nhập (dành cho User)
-# @name getMyLoginHistory
-GET http://localhost:3000/api/auth/login-history/me
-Authorization: Bearer {{ketoanLoginRequest.response.body.token}}
+### (Kế toán) 2.2: Test quyền User - Xem lịch sử của CHÍNH MÌNH
+# (PHẢI THÀNH CÔNG ✅ - Vì route này chỉ yêu cầu checkAuth)
+GET {{host}}/api/auth/login-history/me
+Authorization: Bearer {{ketoanToken}}
 
-### (US_021) Yêu cầu Đăng xuất
-# @name logoutRequest
-POST http://localhost:3000/api/auth/logout
-Authorization: Bearer {{ketoanLoginRequest.response.body.token}}
-
-### (US_021) Yêu cầu Đổi mật khẩu (Cho User)
-# @name changePasswordRequest
-POST http://localhost:3000/api/auth/change-password
+### (Kế toán) 2.3: Test quyền User - Tự đổi mật khẩu
+# (PHẢI THÀNH CÔNG ✅ - Vì route này chỉ yêu cầu checkAuth)
+POST {{host}}/api/auth/change-password
+Authorization: Bearer {{ketoanToken}}
 Content-Type: application/json
-Authorization: Bearer {{ketoanLoginRequest.response.body.token}}
 
 {
     "oldPassword": "12345678",
-    "newPassword": "12345678"
+    "newPassword": "123456789"
 }
+
+### (Kế toán) 2.4: Test Phân Quyền - Cố gắng xem lịch sử TẤT CẢ user
+# (PHẢI THẤT BẠI ⛔ - 403 Forbidden - Vì đây là quyền của Admin)
+# Đây là cách test checkRole(['Admin'])
+GET {{host}}/api/auth/login-history/all
+Authorization: Bearer {{ketoanToken}}
+
+### (Kế toán) 2.5: Test Phân Quyền - Cố gắng TẠO user mới
+# (PHẢI THẤT BẠI ⛔ - 403 Forbidden - Vì đây là quyền của Admin)
+POST {{host}}/api/auth/users
+Authorization: Bearer {{ketoanToken}}
+Content-Type: application/json
+
+{
+    "username": "cudan_test",
+    "fullName": "Cư dân Test",
+    "roleId": 3
+}
+
+# ==================================================
+# KỊCH BẢN 3: ĐĂNG XUẤT VÀ TRUY CẬP VỚI TƯ CÁCH KHÁCH
+# ==================================================
+
+### (Kế toán) 3.1: Yêu cầu đăng xuất
+# Lưu ý: Request này chỉ trả về "OK". Token vẫn hợp lệ cho đến khi hết hạn.
+# Việc "đăng xuất" thực sự là Client (tức là file này) "quên" token đi.
+POST {{host}}/api/auth/logout
+Authorization: Bearer {{ketoanToken}}
+
+### (Khách) 3.2: Test Xác thực - Cố gắng truy cập route bảo vệ sau khi "đăng xuất"
+# (PHẢI THẤT BẠI ⛔ - 401 Unauthorized - Vì không gửi token)
+# Request này cố tình KHÔNG gửi Authorization header.
+# Đây là cách test checkAuth()
+GET {{host}}/api/auth/login-history/me

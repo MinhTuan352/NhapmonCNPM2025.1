@@ -8,18 +8,18 @@ const bcrypt = require('bcryptjs');
 // US_021: Xử lý đăng nhập
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { username, password } = req.body;
 
         // 1. Tìm user trong DB
-        const user = await User.findByEmail(email);
+        const user = await User.findByUsername(username);
         if (!user) {
-            return res.status(401).json({ message: 'Email hoặc mật khẩu không đúng.' });
+            return res.status(401).json({ message: 'Username hoặc mật khẩu không đúng.' });
         }
 
         // 2. So sánh mật khẩu
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(401).json({ message: 'Email hoặc mật khẩu không đúng.' });
+            return res.status(401).json({ message: 'Username hoặc mật khẩu không đúng.' });
         }
 
         // 3. Ghi nhận lịch sử đăng nhập
@@ -28,7 +28,7 @@ exports.login = async (req, res) => {
         // 4. Tạo JSON Web Token (JWT)
         const payload = {
             id: user.id,
-            email: user.email,
+            username: user.username,
             role: user.role_name
         };
 
@@ -69,16 +69,16 @@ exports.changePassword = async (req, res) => {
 exports.createUser = async (req, res) => {
     try {
         // Dữ liệu user mới từ request body
-        const { email, fullName, roleId } = req.body;
+        const { username, fullName, roleId } = req.body;
         const defaultPassword = '12345678'; // Mật khẩu mặc định khi tạo user mới
 
         // Kiểm tra xem email đã tồn tại chưa
-        const existingUser = await User.findByEmail(email);
+        const existingUser = await User.findByUsername(username);
         if (existingUser) {
-            return res.status(400).json({ message: 'Email đã được sử dụng.' });
+            return res.status(400).json({ message: 'Username đã được sử dụng.' });
         }
 
-        const newUser = await User.create({ email, password: defaultPassword, fullName, roleId });
+        const newUser = await User.create({ username, password: defaultPassword, fullName, roleId });
         res.status(201).json({ message: 'Tạo tài khoản thành công!', userId: newUser.id });
 
     } catch (error) {
@@ -108,7 +108,7 @@ exports.getLoginHistoryForUser = async (req, res) => {
         }
         const history = await User.getLoginHistoryForUser(userId);
         res.json({message: `Lấy lịch sử đăng nhập của user ID ${userId} thành công!`,
-            user: { id: user.id, email: user.email, fullName: user.full_name },
+            user: { id: user.id, username: user.username, fullName: user.full_name },
             data: history});
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server', error: error.message });

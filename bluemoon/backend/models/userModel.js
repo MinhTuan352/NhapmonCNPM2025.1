@@ -3,13 +3,13 @@ const db = require('../config/db');
 const bcrypt = require('bcryptjs');
 
 const User = {
-    // Tìm một user bằng email
-    findByEmail: async (email) => {
+    // Tìm một user bằng username
+    findByUsername: async (username) => {
         const [rows] = await db.execute(
             `SELECT users.*, roles.name as role_name
             FROM users
             JOIN roles ON users.role_id = roles.id
-            WHERE email =?`, [email]);
+            WHERE username =?`, [username]);
         return rows[0];
     },
 
@@ -25,15 +25,15 @@ const User = {
 
     // Tạo một user mới (dùng cho Admin)
     create: async (userData) => {
-        const { email, password, fullName, roleId } = userData;
+        const { username, password, fullName, roleId } = userData;
         
         // Mã hóa mật khẩu trước khi lưu
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const [result] = await db.execute(
-            'INSERT INTO users (email, password, full_name, role_id) VALUES (?,?,?,?)',
-            [email, hashedPassword, fullName, roleId]
+            'INSERT INTO users (username, password, full_name, role_id) VALUES (?,?,?,?)',
+            [username, hashedPassword, fullName, roleId]
         );
         return { id: result.insertId,...userData };
     },
@@ -48,7 +48,7 @@ const User = {
     // Lấy lịch sử đăng nhập của user
     getLoginHistory: async (userId) => {
         const [rows] = await db.execute(
-            `SELECT lh.id, lh.user_id, u.full_name, u.email, lh.login_time, lh.ip_address, lh.user_agent
+            `SELECT lh.id, lh.user_id, u.full_name, u.username, lh.login_time, lh.ip_address, lh.user_agent
             FROM login_history lh
             JOIN users u ON lh.user_id = u.id
             WHERE lh.user_id = ?
@@ -60,7 +60,7 @@ const User = {
     // Lấy lịch sử đăng nhập của một user cụ thể (dùng cho Admin)
     getLoginHistoryForUser: async (userId) => {
         const [rows] = await db.execute(
-            `SELECT lh.id, lh.user_id, u.full_name, u.email, lh.login_time, lh.ip_address, lh.user_agent
+            `SELECT lh.id, lh.user_id, u.full_name, u.username, lh.login_time, lh.ip_address, lh.user_agent
             FROM login_history lh
             JOIN users u ON lh.user_id = u.id
             WHERE lh.user_id = ?
@@ -72,7 +72,7 @@ const User = {
     // Lấy lịch sử đăng nhập của tất cả user
     getAllLoginHistory: async () => {
         const [rows] = await db.execute(
-            `SELECT lh.id, lh.user_id, u.full_name, u.email, r.name as role_name, lh.login_time, lh.ip_address, lh.user_agent
+            `SELECT lh.id, lh.user_id, u.full_name, u.username, r.name as role_name, lh.login_time, lh.ip_address, lh.user_agent
             FROM login_history lh
             JOIN users u ON lh.user_id = u.id
             JOIN roles r ON u.role_id = r.id

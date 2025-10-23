@@ -19,7 +19,7 @@ module.exports = (req, res, next) => {
         // Gắn thông tin user đã giải mã vào đối tượng request để các hàm sau có thể sử dụng
         req.user = { 
             id: decodedToken.id, 
-            email: decodedToken.email, 
+            username: decodedToken.username, 
             role: decodedToken.role 
         };
         

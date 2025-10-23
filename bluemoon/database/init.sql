@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS roles (
 -- Bảng lưu thông tin tài khoản người dùng (US_020, US_021)
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
+    username VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL, -- Sẽ lưu mật khẩu đã được mã hóa
     full_name VARCHAR(255),
     role_id INT,
@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS residents (
     phone_number VARCHAR(20),
     created_by INT, -- ID của người dùng Admin đã tạo hồ sơ này
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50) NOT NULL DEFAULT 'Đang sinh sống',
     FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
@@ -43,5 +44,5 @@ INSERT INTO roles (name) VALUES ('Admin'), ('Kế toán'), ('Cư dân'), ('Cơ q
 
 -- Chèn tài khoản Admin test
 -- Mật khẩu: password123 (đã hash bằng bcrypt)
-INSERT INTO users (email, password, full_name, role_id) 
-VALUES ('admin@bluemoon.com', '$2b$10$ukwGjOqP.ly7YnMCPGTh/O5NcY1Bc5Ye2syWyncT0/ojoL4PM.8oa', 'Admin User', 1);
+INSERT INTO users (username, password, full_name, role_id) 
+VALUES ('admin', '$2b$10$ukwGjOqP.ly7YnMCPGTh/O5NcY1Bc5Ye2syWyncT0/ojoL4PM.8oa', 'Admin User', 1);
