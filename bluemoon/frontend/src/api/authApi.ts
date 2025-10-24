@@ -14,7 +14,7 @@ export const authApi = {
   // Backend sẽ tự kiểm tra và trả về role
   login: async (data: LoginFormInputs): Promise<LoginResponse> => {
     // Sửa '/auth/login' cho đúng với endpoint backend của bạn
-    const response = await axiosClient.post('/api/auth/login', data); 
+    const response = await axiosClient.post('/auth/login', data); 
     return response.data;
   },
 };
