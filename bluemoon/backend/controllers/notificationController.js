@@ -74,7 +74,7 @@ exports.markNotificationAsRead = async (req, res) => {
         if (affectedRows === 0) {
             return res.status(404).json({ message: 'Không tìm thấy thông báo hoặc thông báo đã được đánh dấu là đã đọc.' });
         }
-        
+
         res.status(200).json({ message: 'Đã đánh dấu thông báo là đã đọc.' });
     } catch (error) {
         res.status(500).json({ message: 'Lỗi máy chủ khi đánh dấu thông báo là đã đọc', error: error.message });
