@@ -70,7 +70,12 @@ export default function SignIn() {
 
   // === Handlers ===
   const onSubmit = (data: LoginFormInputs) => {
+    console.log('VALIDATION THÀNH CÔNG:', data);
     mutation.mutate(data); // Gửi data (username, password) lên server
+  };
+
+  const onInvalid = (errors: any) => {
+    console.error('VALIDATION THẤT BẠI:', errors);
   };
 
   return (
@@ -139,7 +144,7 @@ export default function SignIn() {
             </Typography>
 
             {/* Form */}
-            <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
+            <Box component="form" noValidate onSubmit={handleSubmit(onSubmit, onInvalid)} sx={{ width: '100%' }}>
               <Controller
                 name="username"
                 control={control}

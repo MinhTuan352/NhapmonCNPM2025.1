@@ -32,13 +32,14 @@ axiosClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // Nếu API trả về 401 (token hết hạn/sai)
-      // Xóa localStorage và tải lại trang (để AuthContext đẩy về /signin)
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/signin';
-    }
+    // THÊM ĐIỀU KIỆN NÀY:
+      // Chỉ reload nếu user ĐÃ ĐĂNG NHẬP (có token) 
+      // hoặc KHÔNG Ở TRANG signin
+      if (localStorage.getItem('token') || window.location.pathname !== '/signin') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/signin';
+      }
     return Promise.reject(error);
   }
 );

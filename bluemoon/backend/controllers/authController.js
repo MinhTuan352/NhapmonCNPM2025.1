@@ -34,7 +34,17 @@ exports.login = async (req, res) => {
 
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        res.json({ message: 'Đăng nhập thành công!', token });
+        // 5. TẠO USER OBJECT ĐỂ TRẢ VỀ
+        const userResponse = {
+            id: user.id,
+            username: user.username,
+            fullName: user.full_name, // (Model của bạn có 'full_name')
+            role: user.role_name // (Payload của bạn dùng 'role_name')
+        };
+
+        // 6. SỬA RESPONSE
+        res.json({ token, user: userResponse }); // <-- TRẢ VỀ CẢ TOKEN VÀ USER
+        res.json({ message: 'Đăng nhập thành công!'});
 
     } catch (error) {
         console.error('LỖI ĐĂNG NHẬP:', error);
