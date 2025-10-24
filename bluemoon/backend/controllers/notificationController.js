@@ -52,3 +52,31 @@ exports.getAllNotifications = async (req, res) => {
         res.status(500).json({ message: 'Lỗi máy chủ khi lấy danh sách thông báo', error: error.message });
     }
 };
+
+// US_016: Cư dân lấy lịch sử thông báo của mình
+exports.getMyNotifications = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const notifications = await Notification.findForUser(userId);
+        res.status(200).json(notifications);
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi máy chủ khi lấy lịch sử thông báo của bạn', error: error.message });
+    }
+};
+
+// US_016: Cư dân đánh dấu thông báo đã đọc
+exports.markNotificationAsRead = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { id } = req.params;
+        
+        const affectedRows = await Notification.markAsRead(id, userId);
+        if (affectedRows === 0) {
+            return res.status(404).json({ message: 'Không tìm thấy thông báo hoặc thông báo đã được đánh dấu là đã đọc.' });
+        }
+        
+        res.status(200).json({ message: 'Đã đánh dấu thông báo là đã đọc.' });
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi máy chủ khi đánh dấu thông báo là đã đọc', error: error.message });
+    }
+};

@@ -48,12 +48,37 @@ const Notification = {
     findAll: async () => {
         const [rows] = await db.query(
             `SELECT n.id, n.title, n.created_at, u.full_name as created_by
-             FROM notifications n
-             JOIN users u ON n.created_by_user_id = u.id
-             ORDER BY n.created_at DESC`
+            FROM notifications n
+            JOIN users u ON n.created_by_user_id = u.id
+            ORDER BY n.created_at DESC`
         );
         return rows;
     },
+
+    // US_016: Lấy lịch sử thông báo của một user (cư dân)
+    findForUser: async (userId) => {
+        const [rows] = await db.execute(
+            `SELECT n.id, n.title, n.content, n.created_at, nr.status, nr.read_at, u_sender.full_name as sent_by
+            FROM notifications n
+            JOIN notification_recipients nr ON n.id = nr.notification_id
+            JOIN users u_sender ON n.created_by_user_id = u_sender.id
+            WHERE nr.user_id = ?
+            ORDER BY n.created_at DESC`,
+            [userId]
+        );
+        return rows;
+    },
+
+    // US_016: Đánh dấu thông báo đã đọc cho một user
+    markAsRead: async (notificationId, userId) => {
+        const [result] = await db.execute(
+            `UPDATE notification_recipients
+            SET status = 'Đã đọc', read_at = CURRENT_TIMESTAMP
+            WHERE notification_id = ? AND user_id = ? AND status = 'Đã gửi'`,
+            [notificationId, userId]
+        );
+        return result.affectedRows; // Trả về 1 nếu có bản ghi được cập nhật, 0 nếu không tìm thấy hoặc đã đọc rồi
+    }
 };
 
 module.exports = Notification;

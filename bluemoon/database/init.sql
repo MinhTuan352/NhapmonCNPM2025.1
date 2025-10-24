@@ -54,11 +54,24 @@ CREATE TABLE IF NOT EXISTS notification_recipients (
     id INT AUTO_INCREMENT PRIMARY KEY,
     notification_id INT NOT NULL,
     user_id INT NOT NULL,
-    status ENUM('sent', 'read') NOT NULL DEFAULT 'sent',
+    status ENUM('Đã gửi', 'Đã đọc') NOT NULL DEFAULT 'Đã gửi',
     read_at TIMESTAMP NULL,
     UNIQUE KEY (notification_id, user_id), -- Đảm bảo 1 cư dân chỉ nhận 1 thông báo 1 lần
     FOREIGN KEY (notification_id) REFERENCES notifications(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Bảng lưu các phản ánh sự cố (US_017)
+CREATE TABLE IF NOT EXISTS incidents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    location VARCHAR(255), -- Vị trí (VD: "Hành lang tầng 10", "Thang máy sảnh B")
+    status ENUM('Đã nộp', 'Đang xử lý', 'Đã giải quyết') NOT NULL DEFAULT 'Đã nộp',
+    reported_by_user_id INT NOT NULL, -- ID của User "Cư dân" đã gửi
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (reported_by_user_id) REFERENCES users(id)
 );
 
 -- Chèn dữ liệu vai trò ban đầu

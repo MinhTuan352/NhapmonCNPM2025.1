@@ -40,15 +40,15 @@ Authorization: Bearer {{adminToken}}
 GET {{host}}/api/auth/login-history/2
 Authorization: Bearer {{adminToken}}
 
-### (Admin) 1.5: Tạo hồ sơ cư dân (Chỉ Admin làm được)
+### (Admin) 1.5: Tạo hồ sơ cư dân
 POST {{host}}/api/residents
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-    "fullName": "Trần Văn B",
-    "apartmentNumber": "102",
-    "phoneNumber": "0909654321"
+    "fullName": "Nguyễn Văn A",
+    "apartmentNumber": "101",
+    "phoneNumber": "0909123456"
 }
 
 # ==================================================
@@ -136,6 +136,10 @@ Content-Type: application/json
 DELETE {{host}}/api/residents/1
 Authorization: Bearer {{adminToken}}
 
+### (Admin) 3.6: (US_017) Admin xem lại tất cả sự cố đã được cư dân báo cáo
+GET {{host}}/api/incidents
+Authorization: Bearer {{adminToken}}
+
 # ==================================================
 # KỊCH BẢN 4: TEST THÔNG BÁO
 # ==================================================
@@ -159,7 +163,7 @@ Content-Type: application/json
 {
     "title": "Thông báo thu phí căn hộ 101",
     "content": "Yêu cầu hộ 101 thanh toán phí dịch vụ tháng 10.",
-    "target": { "type": "specific_users", "ids": [3] }
+    "target": { "type": "specific_users", "ids": [4] }
 }
 
 ### (Admin) 4.3: (US_015) Gửi thông báo cho user không phải Cư dân
@@ -179,14 +183,68 @@ GET {{host}}/api/notifications
 Authorization: Bearer {{adminToken}}
 
 # ==================================================
-# KỊCH BẢN 5: ĐĂNG XUẤT VÀ TRUY CẬP VỚI TƯ CÁCH KHÁCH
+# KỊCH BẢN 5: VAI TRÒ CƯ DÂN (US_016, US_017)
 # ==================================================
 
-### (Kế toán) 5.1: Yêu cầu đăng xuất (Dành cho kế toán)
+### (Cư dân) 5.1: Đăng nhập tài khoản Cư dân
+# @name loginCudan
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+    "username": "cudan01",
+    "password": "12345678"
+}
+
+###
+# Lưu token của Cư dân vào biến cudanToken
+@cudanToken = {{loginCudan.response.body.token}}
+
+
+### (Cư dân) 5.2: (US_016) Xem lịch sử thông báo của tôi
+# (PHẢI THÀNH CÔNG)
+GET {{host}}/api/notifications/my
+Authorization: Bearer {{cudanToken}}
+
+
+### (Cư dân) 4.3: (US_016) Đánh dấu đã đọc thông báo
+# Giả sử thông báo "lịch cắt nước" có ID = 1
+PUT {{host}}/api/notifications/read/1
+Authorization: Bearer {{cudanToken}}
+
+
+### (Cư dân) 4.4: (US_017) Gửi phản ánh sự cố (Hỏng thang máy)
+# (PHẢI THÀNH CÔNG)
+POST {{host}}/api/incidents
+Authorization: Bearer {{cudanToken}}
+Content-Type: application/json
+
+{
+    "title": "Thang máy sảnh B không hoạt động",
+    "description": "Thang máy B2 (thang chở hàng) kẹt ở tầng 10, cửa không mở.",
+    "location": "Thang máy B2"
+}
+
+### (Cư dân) 4.5: (US_017) Xem lại các sự cố tôi đã gửi
+# (PHẢI THÀNH CÔNG)
+GET {{host}}/api/incidents/my
+Authorization: Bearer {{cudanToken}}
+
+
+### (Cư dân) 4.6: (Test Phân Quyền) Cư dân cố gắng xem TẤT CẢ sự cố
+# (PHẢI THẤT BẠI)
+GET {{host}}/api/incidents
+Authorization: Bearer {{cudanToken}}
+
+# ==================================================
+# KỊCH BẢN 6: ĐĂNG XUẤT VÀ TRUY CẬP VỚI TƯ CÁCH KHÁCH
+# ==================================================
+
+### (Kế toán) 6.1: Yêu cầu đăng xuất (Dành cho kế toán)
 POST {{host}}/api/auth/logout
 Authorization: Bearer {{ketoanToken}}
 
-### (Khách) 5.2: Test Xác thực - Cố gắng truy cập route bảo vệ sau khi "đăng xuất"
+### (Khách) 6.2: Test Xác thực - Cố gắng truy cập route bảo vệ sau khi "đăng xuất"
 # (PHẢI THẤT BẠI)
 # Đây là cách test checkAuth()
 GET {{host}}/api/auth/login-history/me
