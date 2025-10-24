@@ -26,9 +26,9 @@ Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-    "username": "ketoan01",
-    "fullName": "Kế toán 01",
-    "roleId": 2
+    "username": "cudan01",
+    "fullName": "Cư dân 01",
+    "roleId": 3
 }
 
 ### (Admin) 1.3: Xem lịch sử đăng nhập TẤT CẢ user (Chỉ Admin làm được)
@@ -46,9 +46,9 @@ Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-    "fullName": "Nguyễn Văn A",
-    "apartmentNumber": "101",
-    "phoneNumber": "0909123456"
+    "fullName": "Trần Văn B",
+    "apartmentNumber": "102",
+    "phoneNumber": "0909654321"
 }
 
 # ==================================================
@@ -70,12 +70,12 @@ Content-Type: application/json
 @ketoanToken = {{loginKetoan.response.body.token}}
 
 ### (Kế toán) 2.2: Test quyền User - Xem lịch sử của CHÍNH MÌNH
-# (PHẢI THÀNH CÔNG ✅ - Vì route này chỉ yêu cầu checkAuth)
+# (PHẢI THÀNH CÔNG)
 GET {{host}}/api/auth/login-history/me
 Authorization: Bearer {{ketoanToken}}
 
 ### (Kế toán) 2.3: Test quyền User - Tự đổi mật khẩu
-# (PHẢI THÀNH CÔNG ✅ - Vì route này chỉ yêu cầu checkAuth)
+# (PHẢI THÀNH CÔNG)
 POST {{host}}/api/auth/change-password
 Authorization: Bearer {{ketoanToken}}
 Content-Type: application/json
@@ -86,13 +86,13 @@ Content-Type: application/json
 }
 
 ### (Kế toán) 2.4: Test Phân Quyền - Cố gắng xem lịch sử TẤT CẢ user
-# (PHẢI THẤT BẠI ⛔ - 403 Forbidden - Vì đây là quyền của Admin)
+# (PHẢI THẤT BẠI)
 # Đây là cách test checkRole(['Admin'])
 GET {{host}}/api/auth/login-history/all
 Authorization: Bearer {{ketoanToken}}
 
 ### (Kế toán) 2.5: Test Phân Quyền - Cố gắng TẠO user mới
-# (PHẢI THẤT BẠI ⛔ - 403 Forbidden - Vì đây là quyền của Admin)
+# (PHẢI THẤT BẠI)
 POST {{host}}/api/auth/users
 Authorization: Bearer {{ketoanToken}}
 Content-Type: application/json
@@ -104,17 +104,89 @@ Content-Type: application/json
 }
 
 # ==================================================
-# KỊCH BẢN 3: ĐĂNG XUẤT VÀ TRUY CẬP VỚI TƯ CÁCH KHÁCH
+# KỊCH BẢN 3: QUẢN LÝ CƯ DÂN (US_002, 003, 005)
+# ==================================================
+# Dùng token Admin
+
+### (Admin) 3.1: (US_002) Xem TẤT CẢ cư dân (không lọc)
+GET {{host}}/api/residents
+Authorization: Bearer {{adminToken}}
+
+### (Admin) 3.2: (US_005) Lọc cư dân theo tên "Nguyễn"
+GET {{host}}/api/residents?name=Nguyen
+Authorization: Bearer {{adminToken}}
+
+### (Admin) 3.3: (US_005) Lọc cư dân theo căn hộ "102"
+GET {{host}}/api/residents?apartment=102
+Authorization: Bearer {{adminToken}}
+
+### (Admin) 3.4: (US_003) Chỉnh sửa thông tin cư dân (ID = 1)
+# Giả sử cư dân "Nguyễn Văn A" vừa tạo có ID = 1
+PUT {{host}}/api/residents/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "phone_number": "0987654321",
+    "status": "Đã chuyển đi"
+}
+
+### (Admin) 3.5: (Bổ sung) Xóa cư dân (ID = 1)
+# (PHẢI THÀNH CÔNG)
+DELETE {{host}}/api/residents/1
+Authorization: Bearer {{adminToken}}
+
+# ==================================================
+# KỊCH BẢN 4: TEST THÔNG BÁO
+# ==================================================
+# (Dùng token Admin)
+### (Admin) 4.1: (US_015) Gửi thông báo cho TẤT CẢ user "Cư dân"
+POST {{host}}/api/notifications
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "title": "Thông báo chung về lịch cắt nước",
+    "content": "Toàn bộ chung cư sẽ cắt nước từ 8h-10h sáng mai.",
+    "target": { "type": "all_residents" }
+}
+
+### (Admin) 4.2: (US_015) Gửi thông báo cho user "Cư dân" CỤ THỂ
+POST {{host}}/api/notifications
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "title": "Thông báo thu phí căn hộ 101",
+    "content": "Yêu cầu hộ 101 thanh toán phí dịch vụ tháng 10.",
+    "target": { "type": "specific_users", "ids": [3] }
+}
+
+### (Admin) 4.3: (US_015) Gửi thông báo cho user không phải Cư dân
+POST {{host}}/api/notifications
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "title": "Thông báo cho Kế toán",
+    "content": "Vui lòng chuẩn bị báo cáo.",
+    "target": { "type": "specific_users", "ids": [2] }
+}
+
+
+### (Admin) 4.4: Lấy danh sách tất cả thông báo đã gửi
+GET {{host}}/api/notifications
+Authorization: Bearer {{adminToken}}
+
+# ==================================================
+# KỊCH BẢN 5: ĐĂNG XUẤT VÀ TRUY CẬP VỚI TƯ CÁCH KHÁCH
 # ==================================================
 
-### (Kế toán) 3.1: Yêu cầu đăng xuất
-# Lưu ý: Request này chỉ trả về "OK". Token vẫn hợp lệ cho đến khi hết hạn.
-# Việc "đăng xuất" thực sự là Client (tức là file này) "quên" token đi.
+### (Kế toán) 5.1: Yêu cầu đăng xuất (Dành cho kế toán)
 POST {{host}}/api/auth/logout
 Authorization: Bearer {{ketoanToken}}
 
-### (Khách) 3.2: Test Xác thực - Cố gắng truy cập route bảo vệ sau khi "đăng xuất"
-# (PHẢI THẤT BẠI ⛔ - 401 Unauthorized - Vì không gửi token)
-# Request này cố tình KHÔNG gửi Authorization header.
+### (Khách) 5.2: Test Xác thực - Cố gắng truy cập route bảo vệ sau khi "đăng xuất"
+# (PHẢI THẤT BẠI)
 # Đây là cách test checkAuth()
 GET {{host}}/api/auth/login-history/me

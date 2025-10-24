@@ -39,6 +39,28 @@ CREATE TABLE IF NOT EXISTS login_history (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+-- Bảng lưu nội dung các thông báo (US_015)
+CREATE TABLE IF NOT EXISTS notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    created_by_user_id INT, -- ID của Admin/BQT đã soạn thông báo
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by_user_id) REFERENCES users(id)
+);
+
+-- Bảng theo dõi thông báo được gửi đến ai (US_015)
+CREATE TABLE IF NOT EXISTS notification_recipients (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    notification_id INT NOT NULL,
+    user_id INT NOT NULL,
+    status ENUM('sent', 'read') NOT NULL DEFAULT 'sent',
+    read_at TIMESTAMP NULL,
+    UNIQUE KEY (notification_id, user_id), -- Đảm bảo 1 cư dân chỉ nhận 1 thông báo 1 lần
+    FOREIGN KEY (notification_id) REFERENCES notifications(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- Chèn dữ liệu vai trò ban đầu
 INSERT INTO roles (name) VALUES ('Admin'), ('Kế toán'), ('Cư dân'), ('Cơ quan chức năng');
 

@@ -38,6 +38,17 @@ const User = {
         return { id: result.insertId,...userData };
     },
 
+    // Tìm tất cả user id theo tên role
+    findAllByRole: async (roleName) => {
+        const [rows] = await db.execute(
+            `SELECT u.id
+            FROM users u
+            JOIN roles r ON u.role_id = r.id
+            WHERE r.name = ?`,
+            [roleName]);
+        return rows.map(row => row.id);
+    },
+
     // Cập nhật mật khẩu cho user
     updatePassword: async (id, newPassword) => {
         const salt = await bcrypt.genSalt(10);
