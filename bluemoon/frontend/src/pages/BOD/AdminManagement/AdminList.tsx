@@ -16,15 +16,21 @@ import { useNavigate } from 'react-router-dom';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
-// Dữ liệu giả (Mock Data) để test
+// Dữ liệu giả (Mock Data) để test (--- CẬP NHẬT --- Yêu cầu 4)
 const mockAdmins = [
   { id: 'ID0001', name: 'Nguyễn Văn A', role: 'bod' },
   { id: 'ID0002', name: 'Nguyễn Văn B', role: 'accountance' },
   { id: 'ID0003', name: 'Nguyễn Văn C', role: 'bod' },
   { id: 'ID0004', name: 'Nguyễn Văn D', role: 'accountance' },
+  { id: 'ID0005', name: 'Trần Thị E', role: 'bod' },
+  { id: 'ID0006', name: 'Lê Văn F', role: 'accountance' },
+  { id: 'ID0007', name: 'Phạm Hữu G', role: 'bod' },
+  { id: 'ID0008', name: 'Hoàng Minh H', role: 'bod' },
+  { id: 'ID0009', name: 'Vũ Thị I', role: 'accountance' },
+  { id: 'ID0010', name: 'Đặng Văn K', role: 'bod' },
 ];
 
-// Định nghĩa màu cho các vai trò [cite: 18]
+// Định nghĩa màu cho các vai trò (giữ nguyên)
 const roleMap = {
   bod: { label: 'Ban quản trị', color: 'primary' },
   accountance: { label: 'Kế toán', color: 'secondary' },
@@ -34,19 +40,18 @@ const roleMap = {
 export default function AdminList() {
   const navigate = useNavigate();
 
-  // Hàm xử lý khi ấn nút "Tạo tài khoản" [cite: 15]
+  // (Giữ nguyên các hàm handlers)
   const handleCreateAccount = () => {
-    navigate('/bod/admin/profile/create'); // Điều hướng đến trang tạo [cite: 2]
+    navigate('/bod/admin/profile/create'); //
   };
   
-  // Hàm xử lý khi ấn "Xem thêm" [cite: 19]
   const handleViewProfile = (adminId: string) => {
-    navigate(`/bod/admin/profile/${adminId}`); // Điều hướng đến trang hồ sơ [cite: 2]
+    navigate(`/bod/admin/profile/${adminId}`); //
   }
 
   return (
     <Box>
-      {/* HÀNG 1: Tiêu đề + Các nút [cite: 16] */}
+      {/* HÀNG 1: Tiêu đề + Các nút (giữ nguyên) */}
       <Box
         sx={{
           display: 'flex',
@@ -55,12 +60,10 @@ export default function AdminList() {
           mb: 3,
         }}
       >
-        {/* Tiêu đề trang [cite: 16] */}
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           DANH SÁCH QUẢN TRỊ VIÊN
         </Typography>
 
-        {/* Nhóm nút [cite: 16] */}
         <Box>
           <Button
             variant="outlined"
@@ -90,14 +93,14 @@ export default function AdminList() {
           </Button>
           <Button
             variant="contained"
-            onClick={handleCreateAccount} // [cite: 15]
+            onClick={handleCreateAccount} //
           >
-            Tạo tài khoản quản trị viên
+            Thêm quản trị viên
           </Button>
         </Box>
       </Box>
 
-      {/* HÀNG 2: Danh sách quản trị viên (dạng thẻ) [cite: 17] */}
+      {/* HÀNG 2: Danh sách quản trị viên (dạng thẻ) (giữ nguyên) */}
       <Grid container spacing={2}>
         {mockAdmins.map((admin) => {
           const roleInfo = roleMap[admin.role as keyof typeof roleMap] || roleMap.resident;
@@ -113,7 +116,7 @@ export default function AdminList() {
                 {/* Avatar */}
                 <Avatar sx={{ width: 56, height: 56, mr: 2 }} />
                 
-                {/* Thông tin [cite: 18] */}
+                {/* Thông tin */}
                 <Box sx={{ flexGrow: 1 }}>
                   <Typography variant="h6">{admin.name}</Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
@@ -126,7 +129,7 @@ export default function AdminList() {
                   />
                 </Box>
                 
-                {/* Nút Xem thêm [cite: 19] */}
+                {/* Nút Xem thêm */}
                 <Button 
                   variant="contained" 
                   onClick={() => handleViewProfile(admin.id)}
@@ -139,7 +142,7 @@ export default function AdminList() {
         })}
       </Grid>
 
-      {/* HÀNG 3: Phân trang */}
+      {/* HÀNG 3: Phân trang (giữ nguyên) */}
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
         <Pagination count={10} color="primary" />
       </Box>

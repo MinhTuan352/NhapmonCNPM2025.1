@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'ITCBenguiat'; /* Bạn tự đặt tên cho font */
+  src: url('./assets/ITCBenguiatStdBookCn.OTF'); /* Đường dẫn đến file font của bạn */
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
