@@ -9,7 +9,7 @@ const Incident = {
             'INSERT INTO incidents (title, description, location, reported_by_user_id) VALUES (?, ?, ?, ?)',
             [title, description, location, reported_by_user_id]
         );
-        return { id: result.insertId, ...incidentData, status: 'Đã nộp' };
+        return { id: result.insertId, ...incidentData, status: 'submitted' };
     },
 
     // US_017: Cư dân xem các sự cố đã báo cáo của mình
@@ -25,9 +25,9 @@ const Incident = {
     findAll: async () => {
         const [rows] = await db.query(
             `SELECT i.*, u.full_name as reported_by_name, u.username as reported_by_username
-             FROM incidents i
-             JOIN users u ON i.reported_by_user_id = u.id
-             ORDER BY i.created_at DESC`
+            FROM incidents i
+            JOIN users u ON i.reported_by_user_id = u.id
+            ORDER BY i.created_at DESC`
         );
         return rows;
     }

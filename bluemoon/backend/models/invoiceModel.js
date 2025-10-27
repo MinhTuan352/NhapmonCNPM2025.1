@@ -9,7 +9,7 @@ const Invoice = {
             'INSERT INTO invoices (user_id, fee_type_id, amount, month, year, issue_date, due_date, created_by_user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
             [user_id, fee_type_id, amount, month, year, issue_date, due_date, created_by_user_id]
         );
-        return { id: result.insertId, ...invoiceData, status: 'Chưa thanh toán' };
+        return { id: result.insertId, ...invoiceData, status: 'unpaid' };
     },
 
     // US_012: Cư dân xem danh sách hóa đơn của mình
@@ -36,7 +36,7 @@ const Invoice = {
             FROM invoices i
             JOIN users u ON i.user_id = u.id
             JOIN fee_types ft ON i.fee_type_id = ft.id
-            WHERE i.status = 'Chưa thanh toán' OR i.status = 'Quá hạn'`
+            WHERE i.status = 'unpaid' OR i.status = 'overdue'`
         );
         return rows;
     },
@@ -54,13 +54,13 @@ const Invoice = {
 
             // 1. Cập nhật hóa đơn
             await connection.execute(
-                "UPDATE invoices SET status = 'Đã thanh toán', payment_method = ?, transaction_id = ?, paid_at = CURRENT_TIMESTAMP WHERE id = ?",
+                "UPDATE invoices SET status = 'paid', payment_method = ?, transaction_id = ?, paid_at = CURRENT_TIMESTAMP WHERE id = ?",
                 [paymentMethod, transactionCode, invoiceId]
             );
 
             // 2. Ghi lại giao dịch chi tiết
             await connection.execute(
-                "INSERT INTO transactions (invoice_id, amount, payment_method, transaction_code, status) VALUES (?, ?, ?, ?, 'Thành công')",
+                "INSERT INTO transactions (invoice_id, amount, payment_method, transaction_code, status) VALUES (?, ?, ?, ?, 'success')",
                 [invoiceId, amount, paymentMethod, transactionCode]
             );
 
@@ -77,7 +77,7 @@ const Invoice = {
     // US_013: Đánh dấu hóa đơn là 'Quá hạn' nếu quá hạn thanh toán
     markAsOverdue: async (invoiceId) => {
          await db.execute(
-            "UPDATE invoices SET status = 'Quá hạn' WHERE id = ? AND status = 'Chưa thanh toán'",
+            "UPDATE invoices SET status = 'overdue' WHERE id = ? AND status = 'unpaid'",
             [invoiceId]
         );
     }

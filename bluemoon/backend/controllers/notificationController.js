@@ -18,7 +18,7 @@ exports.createNotification = async (req, res) => {
     // 1. Xác định ID của các user sẽ nhận thông báo
     if (target.type === 'all_residents') {
       // Lấy tất cả user có vai trò 'Cư dân'
-      targetUserIds = await User.findAllByRole('Cư dân');
+      targetUserIds = await User.findAllByRole('resident');
     } else if (target.type === 'specific_users') {
       if (!target.ids || !Array.isArray(target.ids) || target.ids.length === 0) {
         return res.status(400).json({ message: 'Vui lòng cung cấp danh sách user ID cụ thể.' });

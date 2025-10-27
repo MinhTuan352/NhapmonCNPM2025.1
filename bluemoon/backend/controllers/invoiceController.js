@@ -27,7 +27,7 @@ exports.createInvoices = async (req, res) => {
         const createdInvoices = [];
         for (const user_id of user_ids) {
             const userData = await User.findById(user_id);
-            if (!userData || userData.role_name !== 'Cư dân') {
+            if (!userData || userData.role_name !== 'resident') {
                 console.warn(`Skipping user ID ${user_id}: Not a resident.`);
                 continue;
             }

@@ -7,9 +7,9 @@ const Resident = {
         const { fullName, apartmentNumber, phoneNumber, createdBy, status } = residentData;
         const [result] = await db.execute(
             'INSERT INTO residents (full_name, apartment_number, phone_number, created_by, status) VALUES (?,?,?,?,?)',
-            [fullName, apartmentNumber, phoneNumber, createdBy, status || 'Đang sinh sống']
+            [fullName, apartmentNumber, phoneNumber, createdBy, status || 'active']
         );
-        return { id: result.insertId,...residentData, status: status || 'Đang sinh sống'};
+        return { id: result.insertId,...residentData, status: status || 'active'};
     },
 
     /**

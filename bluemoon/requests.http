@@ -8,7 +8,7 @@
 # (Chạy các bước này theo thứ tự để tạo dữ liệu mẫu)
 # ==================================================
 
-### (Admin) 1.1: Đăng nhập tài khoản Admin
+### (Admin) 1.1: Đăng nhập tài khoản Admin ('bod')
 # @name loginAdmin
 POST {{host}}/api/auth/login
 Content-Type: application/json
@@ -22,7 +22,7 @@ Content-Type: application/json
 @adminToken = {{loginAdmin.response.body.token}}
 
 
-### (Admin) 1.2: Tạo tài khoản Kế toán (ID role = 2)
+### (Admin) 1.2: Tạo tài khoản Kế toán ('accountance') (ID role = 2)
 # @name createKetoan
 POST {{host}}/api/auth/users
 Authorization: Bearer {{adminToken}}
@@ -31,12 +31,11 @@ Content-Type: application/json
 {
     "username": "ketoan01",
     "fullName": "Kế toán 01",
-    "roleId": 2
+    "roleId": 2 
 }
 
 
-### (Admin) 1.3: Tạo tài khoản Cư dân (ID role = 3)
-# (Cần thiết cho Kịch bản 5, 6, 7)
+### (Admin) 1.3: Tạo tài khoản Cư dân ('resident') (ID role = 3)
 # @name createCudan
 POST {{host}}/api/auth/users
 Authorization: Bearer {{adminToken}}
@@ -44,7 +43,7 @@ Content-Type: application/json
 
 {
     "username": "cudan01",
-    "fullName": "Cư dân 01 (Hộ 101)",
+    "fullName": "Cư Dân 01 (Hộ 101)",
     "roleId": 3
 }
 
@@ -57,7 +56,8 @@ Content-Type: application/json
 {
     "fullName": "Nguyễn Văn A (Hộ 101)",
     "apartmentNumber": "101",
-    "phoneNumber": "0909123456"
+    "phoneNumber": "0909123456",
+    "status": "active"
 }
 
 # ==================================================
@@ -92,7 +92,7 @@ Content-Type: application/json
 
 {
     "oldPassword": "12345678",
-    "newPassword": "123456789"
+    "newPassword": "123456789" 
 }
 
 
@@ -135,7 +135,7 @@ Content-Type: application/json
 
 {
     "phone_number": "0987654321",
-    "status": "Đã chuyển đi"
+    "status": "inactive"
 }
 
 ### (Admin) 3.4: Xóa cư dân (ID = 1)
@@ -144,56 +144,57 @@ DELETE {{host}}/api/residents/1
 Authorization: Bearer {{adminToken}}
 
 # ==================================================
-# KỊCH BẢN 4: QUẢN LÝ PHÍ (US_011) (MỚI)
+# KỊCH BẢN 4: QUẢN LÝ PHÍ (US_011)
 # (Dùng token Kế toán)
 # ==================================================
 
-### (Kế toán) 4.1: (US_011) Tạo loại phí "Phí quản lý"
+### (Kế toán) 4.1: (US_011) Tạo loại phí "Management Fee"
 # @name createFee1
 POST {{host}}/api/fees
 Authorization: Bearer {{ketoanToken}}
 Content-Type: application/json
 
 {
-    "name": "Phí quản lý",
-    "description": "Phí quản lý vận hành chung cư",
+    "name": "Management Fee",
+    "description": "Monthly apartment management fee",
     "amount": 10000,
-    "unit": "VND/m2/tháng"
+    "unit": "VND/sqm/month"
 }
 
-### (Kế toán) 4.2: (US_011) Tạo loại phí "Phí gửi xe máy"
+### (Kế toán) 4.2: (US_011) Tạo loại phí "Motorbike Parking Fee"
 # @name createFee2
 POST {{host}}/api/fees
 Authorization: Bearer {{ketoanToken}}
 Content-Type: application/json
 
 {
-    "name": "Phí gửi xe máy",
+    "name": "Motorbike Parking Fee",
     "amount": 70000,
-    "unit": "VND/xe/tháng"
+    "unit": "VND/bike/month"
 }
 
 ### (Kế toán) 4.3: (US_011) Xem tất cả các loại phí
 GET {{host}}/api/fees
 Authorization: Bearer {{ketoanToken}}
 
-### (Kế toán) 4.4: (US_011) Cập nhật giá "Phí gửi xe máy" (ID = 2)
+### (Kế toán) 4.4: (US_011) Cập nhật giá "Motorbike Parking Fee" (ID = 2)
 PUT {{host}}/api/fees/2
 Authorization: Bearer {{ketoanToken}}
 Content-Type: application/json
 
 {
     "amount": 80000,
-    "description": "Phí gửi xe máy (đã điều chỉnh)"
+    "description": "Motorbike Parking Fee (adjusted)"
 }
 
-### (Kế toán) 4.5: (US_011) Hủy/Tắt loại phí "Phí quản lý" (ID = 1)
+### (Kế toán) 4.5: (US_011) Hủy/Tắt loại phí "Management Fee" (ID = 1)
+# (Thực ra là set is_active = false)
 DELETE {{host}}/api/fees/1
 Authorization: Bearer {{ketoanToken}}
 
 
 # ==================================================
-# KỊCH BẢN 5: QUẢN LÝ HÓA ĐƠN (US_012, 013) (MỚI)
+# KỊCH BẢN 5: QUẢN LÝ HÓA ĐƠN (US_012, 013)
 # ==================================================
 
 ### (Kế toán) 5.1: (US_012) Tạo hóa đơn "Phí gửi xe" cho Cư dân 01
@@ -207,7 +208,7 @@ Content-Type: application/json
     "fee_type_id": 2,
     "month": 10,
     "year": 2025,
-    "due_date": "2025-10-31" 
+    "due_date": "2025-11-15"
 }
 
 ### (Kế toán) 5.2: (US_011 - Test) Cố gắng tạo HĐ với ngày quá hạn
@@ -239,7 +240,7 @@ Content-Type: application/json
 
 
 ### (Cư dân) 5.4: (US_012) Cư dân xem hóa đơn của mình
-# (Sẽ thấy HĐ Phí gửi xe 80.000đ)
+# (Sẽ thấy HĐ Phí gửi xe 80.000đ, status: 'unpaid')
 GET {{host}}/api/invoices/my
 Authorization: Bearer {{cudanToken_Invoice}}
 
@@ -258,7 +259,7 @@ Authorization: Bearer {{cudanToken_Invoice}}
 GET {{paymentUrl}}
 
 ### (Cư dân) 5.7: (US_012) Cư dân kiểm tra lại hóa đơn
-# (Sẽ thấy status: "Đã thanh toán")
+# (Sẽ thấy status: 'paid')
 GET {{host}}/api/invoices/my
 Authorization: Bearer {{cudanToken_Invoice}}
 
@@ -268,26 +269,26 @@ Authorization: Bearer {{cudanToken_Invoice}}
 # (Dùng token Admin)
 # ==================================================
 
-### (Admin) 6.1: (US_015) Gửi thông báo cho TẤT CẢ user "Cư dân"
+### (Admin) 6.1: (US_015) Gửi thông báo cho TẤT CẢ user "resident"
 POST {{host}}/api/notifications
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-    "title": "Thông báo chung về lịch cắt nước",
-    "content": "Toàn bộ chung cư sẽ cắt nước từ 8h-10h sáng mai.",
-    "target": { "type": "all_residents" }
+    "title": "General announcement about water cut schedule",
+    "content": "The entire building will have water cut off from 8am-10am tomorrow morning.",
+    "target": { "type": "all_residents" } 
 }
 
-### (Admin) 6.2: (US_015) Gửi thông báo cho user "Cư dân" CỤ THỂ
+### (Admin) 6.2: (US_015) Gửi thông báo cho user "resident" CỤ THỂ
 # (Giả sử cudan01 có ID = 3)
 POST {{host}}/api/notifications
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-    "title": "Thông báo thu phí căn hộ 101",
-    "content": "Yêu cầu hộ 101 thanh toán phí dịch vụ tháng 10.",
+    "title": "Apartment 101 Fee Notice",
+    "content": "Request for apartment 101 to pay October service fee.",
     "target": { "type": "specific_users", "ids": [3] }
 }
 
@@ -298,8 +299,8 @@ Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-    "title": "Thông báo cho Kế toán",
-    "content": "Vui lòng chuẩn bị báo cáo.",
+    "title": "Notice for Accountant",
+    "content": "Please prepare the report.",
     "target": { "type": "specific_users", "ids": [2] }
 }
 
@@ -327,7 +328,7 @@ Content-Type: application/json
 
 
 ### (Cư dân) 7.2: (US_016) Xem lịch sử thông báo của tôi (Icon chuông 🔔)
-# (PHẢI THÀNH CÔNG ✅ - Sẽ thấy 2 thông báo từ Kịch bản 6)
+# (PHẢI THÀNH CÔNG ✅ - Sẽ thấy 2 thông báo từ Kịch bản 6, status: 'sent')
 GET {{host}}/api/notifications/my
 Authorization: Bearer {{cudanToken}}
 
@@ -345,13 +346,13 @@ Authorization: Bearer {{cudanToken}}
 Content-Type: application/json
 
 {
-    "title": "Thang máy sảnh B không hoạt động",
-    "description": "Thang máy B2 (thang chở hàng) kẹt ở tầng 10, cửa không mở.",
-    "location": "Thang máy B2"
+    "title": "Elevator in Hall B is out of order",
+    "description": "Elevator B2 (freight elevator) is stuck on the 10th floor, door won't open.",
+    "location": "Elevator B2"
 }
 
 ### (Cư dân) 7.5: (US_017) Xem lại các sự cố tôi đã gửi
-# (PHẢI THÀNH CÔNG ✅)
+# (PHẢI THÀNH CÔNG ✅ - Sẽ thấy status: 'submitted')
 GET {{host}}/api/incidents/my
 Authorization: Bearer {{cudanToken}}
 
@@ -367,7 +368,7 @@ Authorization: Bearer {{cudanToken}}
 # ==================================================
 
 ### (Admin) 8.1: (US_017) Admin xem lại tất cả sự cố đã được cư dân báo cáo
-# (Sẽ thấy sự cố "Thang máy sảnh B" do cudan01 gửi)
+# (Sẽ thấy sự cố "Elevator in Hall B" do cudan01 gửi)
 GET {{host}}/api/incidents
 Authorization: Bearer {{adminToken}}
 

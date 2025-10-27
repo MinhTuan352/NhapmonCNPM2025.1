@@ -74,7 +74,7 @@ const Notification = {
         const [result] = await db.execute(
             `UPDATE notification_recipients
             SET status = 'Đã đọc', read_at = CURRENT_TIMESTAMP
-            WHERE notification_id = ? AND user_id = ? AND status = 'Đã gửi'`,
+            WHERE notification_id = ? AND user_id = ? AND status = 'sent'`,
             [notificationId, userId]
         );
         return result.affectedRows; // Trả về 1 nếu có bản ghi được cập nhật, 0 nếu không tìm thấy hoặc đã đọc rồi

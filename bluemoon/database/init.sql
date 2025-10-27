@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS residents (
     phone_number VARCHAR(20),
     created_by INT, -- ID của người dùng Admin đã tạo hồ sơ này
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status VARCHAR(50) NOT NULL DEFAULT 'Đang sinh sống',
+    status VARCHAR(50) NOT NULL DEFAULT 'active',
     FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS notification_recipients (
     id INT AUTO_INCREMENT PRIMARY KEY,
     notification_id INT NOT NULL,
     user_id INT NOT NULL,
-    status ENUM('Đã gửi', 'Đã đọc') NOT NULL DEFAULT 'Đã gửi',
+    status ENUM('sent', 'read') NOT NULL DEFAULT 'sent',
     read_at TIMESTAMP NULL,
     UNIQUE KEY (notification_id, user_id), -- Đảm bảo 1 cư dân chỉ nhận 1 thông báo 1 lần
     FOREIGN KEY (notification_id) REFERENCES notifications(id) ON DELETE CASCADE,
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS incidents (
     title VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     location VARCHAR(255), -- Vị trí (VD: "Hành lang tầng 10", "Thang máy sảnh B")
-    status ENUM('Đã nộp', 'Đang xử lý', 'Đã giải quyết') NOT NULL DEFAULT 'Đã nộp',
+    status ENUM('submitted', 'in_progress', 'resolved') NOT NULL DEFAULT 'submitted',
     reported_by_user_id INT NOT NULL, -- ID của User "Cư dân" đã gửi
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS invoices (
     year INT NOT NULL, -- Hóa đơn cho năm
     issue_date DATE NOT NULL, -- Ngày phát hành HĐ
     due_date DATE NOT NULL, -- Hạn chót
-    status ENUM('Chưa thanh toán', 'Đã thanh toán', 'Quá hạn', 'Đã hủy') NOT NULL DEFAULT 'Chưa thanh toán',
+    status ENUM('unpaid', 'paid', 'overdue', 'cancelled') NOT NULL DEFAULT 'unpaid',
     payment_method VARCHAR(50) NULL,
     transaction_id VARCHAR(255) NULL, -- Mã giao dịch từ cổng thanh toán
     paid_at TIMESTAMP NULL,
@@ -115,13 +115,13 @@ CREATE TABLE IF NOT EXISTS transactions (
     amount DECIMAL(15, 2) NOT NULL,
     payment_method VARCHAR(50) NOT NULL,
     transaction_code VARCHAR(255) NOT NULL, -- Mã từ cổng thanh toán
-    status ENUM('Thành công', 'Thất bại', 'Chờ xử lý') NOT NULL,
+    status ENUM('success', 'failed', 'pending') NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (invoice_id) REFERENCES invoices(id)
 );
 
 -- Chèn dữ liệu vai trò ban đầu
-INSERT INTO roles (name) VALUES ('Admin'), ('Kế toán'), ('Cư dân'), ('Cơ quan chức năng');
+INSERT INTO roles (name) VALUES ('bod'), ('accountance'), ('resident');
 
 -- Chèn tài khoản Admin test
 -- Mật khẩu: password123 (đã hash bằng bcrypt)
