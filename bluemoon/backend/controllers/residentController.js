@@ -24,7 +24,7 @@ exports.getResidents = async (req, res) => {
         const { name, apartment, status } = req.query;
         const filters = { name, apartment, status };
         const residents = await Resident.findAll(filters);
-        res.status(200).json({ residents });
+        res.status(200).json(residents);
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server khi lấy danh sách cư dân', error: error.message });
     }

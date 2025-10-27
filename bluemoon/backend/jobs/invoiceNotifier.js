@@ -24,7 +24,7 @@ const startInvoiceReminderJob = () => {
                 let title = null;
                 let content = null;
 
-                if (daysRemaining < 0 && invoice.status === 'unpaid') {
+                if (daysRemaining < 0 && invoice.status === 'Chưa thanh toán') {
                     // 1. Quá hạn
                     // Cập nhật trạng thái trong CSDL
                     await Invoice.markAsOverdue(invoice.id);
@@ -65,4 +65,4 @@ const startInvoiceReminderJob = () => {
 startInvoiceReminderJob();
 
 // Chúng ta chỉ export hàm (nếu cần)
-module.exports = startInvoiceReminderJob;
+module.exports = { startInvoiceReminderJob };

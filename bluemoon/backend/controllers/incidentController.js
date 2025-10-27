@@ -22,7 +22,7 @@ exports.getMyIncidents = async (req, res) => {
     try {
         const userId = req.user.id;
         const incidents = await Incident.findForUser(userId);
-        res.status(200).json({ message: 'Lấy danh sách sự cố thành công!', incidents });
+        res.status(200).json(incidents);
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server khi lấy danh sách sự cố', error: error.message });
     }
@@ -32,7 +32,7 @@ exports.getMyIncidents = async (req, res) => {
 exports.getAllIncidents = async (req, res) => {
     try {
         const incidents = await Incident.findAll();
-        res.status(200).json({ message: 'Lấy danh sách tất cả sự cố thành công!', incidents });
+        res.status(200).json(incidents);
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server khi lấy danh sách sự cố', error: error.message });
     }

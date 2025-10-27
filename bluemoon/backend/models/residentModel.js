@@ -62,13 +62,13 @@ const Resident = {
         });
 
         if (fields.length === 0) {
-            throw new Error('Không có trường hợp lệ để cập nhật.');
+            return 0; // Không có gì để cập nhật
         }
 
         values.push(id); // Thêm id vào cuối mảng cho điều kiện WHERE
         const query = `UPDATE residents SET ${fields.join(', ')} WHERE id = ?`;
         const [result] = await db.execute(query, values);
-        return result.affectedRows > 0 ? { id, ...residentData } : null;
+        return result.affectedRows;
     },
 
     // Bổ sung US: Xóa hồ sơ cư dân

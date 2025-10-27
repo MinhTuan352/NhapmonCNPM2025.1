@@ -36,6 +36,6 @@ app.listen(port, () => {
 });
 
 // Khởi động các tác vụ định kỳ (cron jobs)
-require('./jobs/invoiceNotifier');
+const invoiceNotifier = require('./jobs/invoiceNotifier');
 
 module.exports = app;
