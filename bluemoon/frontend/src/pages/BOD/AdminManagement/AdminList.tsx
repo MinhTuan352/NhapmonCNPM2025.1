@@ -20,12 +20,13 @@ import {
   ListItemIcon,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useRef, type ChangeEvent } from 'react';
 // Icons
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import * as XLSX from 'xlsx';
 
 // Dữ liệu giả (Mock Data) để test (--- CẬP NHẬT --- Yêu cầu 4)
 const mockAdmins = [
@@ -55,6 +56,7 @@ export default function AdminList() {
   const [openPrimary, setOpenPrimary] = useState(false);
   const [openExisting, setOpenExisting] = useState(false);
   const [existingId, setExistingId] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleOpenPrimaryModal = () => {
     setOpenPrimary(true);
@@ -96,8 +98,77 @@ export default function AdminList() {
     navigate(`/bod/admin/profile/${adminId}`); //
   }
 
+  // --- THÊM MỚI: Logic EXPORT ---
+  const handleExport = () => {
+    // 1. (Tùy chọn) Chuyển đổi dữ liệu cho dễ đọc hơn
+    const dataToExport = mockAdmins.map(admin => ({
+      'ID': admin.id,
+      'Họ và Tên': admin.name,
+      'Vai trò': roleMap[admin.role as keyof typeof roleMap]?.label || 'Không xác định'
+    }));
+
+    // 2. Tạo worksheet
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    // 3. Tạo workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'DanhSachQuanTriVien');
+    
+    // 4. Xuất file
+    XLSX.writeFile(wb, 'DanhSachQuanTriVien.xlsx');
+  };
+
+  // --- THÊM MỚI: Logic IMPORT (Bước 1: Kích hoạt input ẩn) ---
+  const handleImportClick = () => {
+    // Mở hộp thoại chọn file của máy tính
+    fileInputRef.current?.click();
+  };
+
+  // --- THÊM MỚI: Logic IMPORT (Bước 2: Xử lý file đã chọn) ---
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = event.target?.result;
+        const workbook = XLSX.read(data, { type: 'array' });
+        
+        // Lấy sheet đầu tiên
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        
+        // Chuyển đổi sheet thành JSON
+        const json = XLSX.utils.sheet_to_json(worksheet);
+        
+        // (Đây là nơi bạn xử lý dữ liệu json, ví dụ: gửi lên server)
+        console.log('Dữ liệu Import từ Excel:', json);
+        alert('Đã đọc file Excel thành công! Xem dữ liệu ở Console (F12).');
+
+      } catch (error) {
+        console.error("Lỗi khi đọc file Excel:", error);
+        alert('Đã xảy ra lỗi khi đọc file. Vui lòng kiểm tra định dạng file.');
+      }
+    };
+    
+    // Đọc file
+    reader.readAsArrayBuffer(file);
+
+    // Reset input để có thể chọn lại file y hệt
+    e.target.value = '';
+  };
+
   return (
     <Box>
+      {/* --- THÊM MỚI: Input ẩn để Import --- */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        style={{ display: 'none' }}
+        accept=".xlsx, .xls" // Chỉ chấp nhận file Excel
+      />
+
       {/* HÀNG 1: Tiêu đề + Các nút (giữ nguyên) */}
       <Box
         sx={{
@@ -122,6 +193,7 @@ export default function AdminList() {
               borderColor: '#ccc',
               '&:hover': { backgroundColor: '#f9f9f9', borderColor: '#bbb' }
             }}
+            onClick={handleImportClick}
           >
             Import
           </Button>
@@ -135,6 +207,7 @@ export default function AdminList() {
               borderColor: '#ccc',
               '&:hover': { backgroundColor: '#f9f9f9', borderColor: '#bbb' }
             }}
+            onClick={handleExport}
           >
             Export
           </Button>

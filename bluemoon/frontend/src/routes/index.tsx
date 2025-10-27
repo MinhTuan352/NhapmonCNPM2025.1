@@ -7,7 +7,8 @@ import ProtectedRoutes from './ProtectedRoutes'; // Import
 import SignIn from '../pages/Auth/SignIn';
 import AdminList from '../pages/BOD/AdminManagement/AdminList';
 import NotFound from '../pages/errors/NotFound';
-import AdminCreate from '../pages/BOD/AdminManagement/AdminCreate';
+import AdminCreate from '../pages/BOD/AdminManagement/AdminCreate.tsx';
+import AdminProfile from '../pages/BOD/AdminManagement/AdminProfile';
 
 export default function AppRoutes() {
   return (
@@ -30,7 +31,8 @@ export default function AppRoutes() {
 
             {/* --- THÊM MỚI (Yêu cầu 1.2) --- */}
             <Route path="bod/admin/profile/create" element={<AdminCreate />} />
-            
+            <Route path="bod/admin/profile/:id" element={<AdminProfile />} />
+
             {/* ... các route bod khác ... */}
           </Route>
 
