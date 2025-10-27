@@ -74,6 +74,52 @@ CREATE TABLE IF NOT EXISTS incidents (
     FOREIGN KEY (reported_by_user_id) REFERENCES users(id)
 );
 
+-- Bảng lưu các loại phí (US_011)
+CREATE TABLE IF NOT EXISTS fee_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL, -- "Phí quản lý", "Phí gửi xe máy"
+    description TEXT,
+    amount DECIMAL(15, 2) NOT NULL, -- Giá tiền (hỗ trợ số lớn)
+    unit VARCHAR(50), -- "VND/m2/tháng", "VND/xe/tháng", "VND/khối"
+    is_active BOOLEAN DEFAULT true, -- Dùng để "hủy" hoặc tạm ngưng
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by_user_id INT, -- ID của Kế toán/Admin đã tạo
+    FOREIGN KEY (created_by_user_id) REFERENCES users(id)
+);
+
+-- Bảng lưu các hóa đơn cho từng Cư dân (US_012)
+CREATE TABLE IF NOT EXISTS invoices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL, -- User "Cư dân" phải trả
+    fee_type_id INT NOT NULL, -- Liên kết với loại phí
+    amount DECIMAL(15, 2) NOT NULL, -- Số tiền (có thể tùy chỉnh)
+    month INT NOT NULL, -- Hóa đơn cho tháng
+    year INT NOT NULL, -- Hóa đơn cho năm
+    issue_date DATE NOT NULL, -- Ngày phát hành HĐ
+    due_date DATE NOT NULL, -- Hạn chót
+    status ENUM('Chưa thanh toán', 'Đã thanh toán', 'Quá hạn', 'Đã hủy') NOT NULL DEFAULT 'Chưa thanh toán',
+    payment_method VARCHAR(50) NULL,
+    transaction_id VARCHAR(255) NULL, -- Mã giao dịch từ cổng thanh toán
+    paid_at TIMESTAMP NULL,
+    created_by_user_id INT, -- Kế toán đã tạo
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (fee_type_id) REFERENCES fee_types(id) ON DELETE RESTRICT,
+    FOREIGN KEY (created_by_user_id) REFERENCES users(id)
+);
+
+-- Bảng lưu lịch sử chi tiết các giao dịch (US_012)
+-- (Tách riêng để một hóa đơn có thể được thanh toán nhiều lần)
+CREATE TABLE IF NOT EXISTS transactions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_id INT NOT NULL,
+    amount DECIMAL(15, 2) NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    transaction_code VARCHAR(255) NOT NULL, -- Mã từ cổng thanh toán
+    status ENUM('Thành công', 'Thất bại', 'Chờ xử lý') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (invoice_id) REFERENCES invoices(id)
+);
+
 -- Chèn dữ liệu vai trò ban đầu
 INSERT INTO roles (name) VALUES ('Admin'), ('Kế toán'), ('Cư dân'), ('Cơ quan chức năng');
 

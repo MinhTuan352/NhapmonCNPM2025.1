@@ -12,6 +12,8 @@ const authRoutes = require('./routes/authRoutes');
 const residentRoutes = require('./routes/residentRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const incidentRoutes = require('./routes/incidentRoutes');
+const feeRoutes = require('./routes/feeRoutes');
+const invoiceRoutes = require('./routes/invoiceRoutes');
 
 // Middleware để đọc JSON từ request body
 app.use(cors({
@@ -26,7 +28,14 @@ app.use('/api/auth', authRoutes);
 app.use('/api/residents', residentRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/incidents', incidentRoutes);
+app.use('/api/fees', feeRoutes);
+app.use('/api/invoices', invoiceRoutes);
 
 app.listen(port, () => {
     console.log(`Server đang chạy tại http://localhost:${port}`);
 });
+
+// Khởi động các tác vụ định kỳ (cron jobs)
+require('./jobs/invoiceNotifier');
+
+module.exports = app;

@@ -1,4 +1,4 @@
-// backend/models/incidentModel.js
+// File: backend/models/incidentModel.js
 const db = require('../config/db');
 
 const Incident = {

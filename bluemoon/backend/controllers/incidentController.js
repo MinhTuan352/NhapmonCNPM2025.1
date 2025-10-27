@@ -1,4 +1,4 @@
-// backend/controllers/incidentController.js
+// File: backend/controllers/incidentController.js
 const Incident = require('../models/incidentModel');
 
 // US_017: Cư dân báo cáo sự cố
