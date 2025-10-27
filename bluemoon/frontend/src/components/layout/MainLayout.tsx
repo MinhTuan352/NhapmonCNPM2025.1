@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react'; // --- THÊM MỚI ---
-import { alpha, easing } from '@mui/material/styles'; // --- THÊM MỚI ---
+import { alpha } from '@mui/material/styles'; // --- THÊM MỚI ---
 import { useAuth } from '../../contexts/AuthContext'; // --- THÊM MỚI ---
 
 // --- THÊM MỚI CÁC ICON ---
@@ -34,7 +34,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 
 import sidebarBackground from '../../assets/bluemoon-background.jpg';
-import { theme } from '../../theme/theme';
+//import { theme } from '../../theme/theme';
 
 const drawerWidth = 240; // Chiều rộng của Sidebar
 const collapsedWidth = 72; // Chiều rộng khi thu gọn
