@@ -122,11 +122,11 @@ const mockFees: GridRowsProp = [
 // --- ĐỊNH NGHĨA CÁC CỘT (COLUMNS) CHO BẢNG ---
 const columns: GridColDef[] = [
   // 1. Mã Công Nợ
-  { field: 'id', headerName: 'Mã CĐ', width: 90 },
+  { field: 'id', headerName: 'Mã HĐ', width: 90 },
   // 2. Mã Căn Hộ
   { field: 'apartment_id', headerName: 'Căn hộ', width: 70 },
   // 3. Tên Chủ Hộ
-  { field: 'resident_name', headerName: 'Chủ hộ', width: 150 },
+  { field: 'resident_name', headerName: 'Người TT', width: 150 },
   // 4. Loại Phí
   { field: 'fee_type', headerName: 'Loại phí', width: 100 },
   // 5. Nội dung
@@ -160,7 +160,7 @@ const columns: GridColDef[] = [
   // 10. Còn Nợ
   { 
     field: 'amount_remaining', 
-    headerName: 'Còn nợ', 
+    headerName: 'Dư nợ', 
     width: 100,
     type: 'number',
     valueFormatter: (value: number) => value.toLocaleString('vi-VN') + ' đ',
@@ -259,16 +259,16 @@ export default function FeeList() {
   const handleExport = () => {
       // 1. (Tùy chọn) Chuyển đổi dữ liệu cho dễ đọc hơn
       const dataToExport = mockFees.map(fee => ({
-        'Mã CĐ': fee.id,
+        'Mã HĐ': fee.id,
         'Căn hộ': fee.apartment_id,
-        'Chủ hộ': fee.resident_name,
+        'Người TT': fee.resident_name,
         'Loại phí': fee.fee_type,
         'Nội dung': fee.description,
         'Kỳ TT': fee.billing_period,
         'Hạn TT': fee.due_date,
         'Tổng thu': fee.total_amount,
         'Đã thu': fee.amount_paid,
-        'Còn nợ': fee.amount_remaining,
+        'Dư nợ': fee.amount_remaining,
         'Trạng thái': fee.status,
         'Ngày TT': fee.payment_date,
       }));
