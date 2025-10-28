@@ -30,7 +30,16 @@ import AccountantFeeSetupCreate from '../pages/Accountant/Setup/FeeSetupCreate.t
 import AccountantFeeSetupEdit from '../pages/Accountant/Setup/FeeSetupEdit.tsx';
 import AccountantPaymentSetupList from '../pages/Accountant/Setup/PaymentSetupList.tsx';
 import AccountantPaymentSetupCreate from '../pages/Accountant/Setup/PaymentSetupCreate.tsx';
-import AccountantPaymentSetupEdit from '../pages/Accountant/Setup/PaymentSetupEdit.tsx';
+import AccountantPaymentSetupEdit from '../pages/Accountant/Setup/PaymentSetupEdit.tsx'
+
+import ResidentAccountInfo from '../pages/Resident/Account/ResidentAccountInfo.tsx';
+import ResidentProfileEdit from '../pages/Resident/Profile/ResidentProfileEdit.tsx';
+import ResidentFeeList from '../pages/Resident/Fee/ResidentFeeList.tsx';
+import ResidentFeeInvoiceInfo from '../pages/Resident/Fee/ResidentFeeInvoiceInfo.tsx';
+import ResidentFeePayment from '../pages/Resident/Fee/ResidentFeePayment.tsx';
+import ResidentNotificationList from '../pages/Resident/Notification/ResidentNotificationList.tsx';
+import ResidentReportSend from '../pages/Resident/Report/ResidentReportSend.tsx';
+import ResidentReportList from '../pages/Resident/Report/ResidentReportList.tsx';
 
 export default function AppRoutes() {
   return (
@@ -89,6 +98,26 @@ export default function AppRoutes() {
             <Route path="accountance/fee/setup/paymentSetup" element={<AccountantPaymentSetupList />} />
             <Route path="accountance/fee/setup/paymentSetup/create" element={<AccountantPaymentSetupCreate />} />
             <Route path="accountance/fee/setup/paymentSetup/edit/:id" element={<AccountantPaymentSetupEdit />} />
+          </Route>
+
+          {/* === RESIDENT Routes (THÊM MỚI) === */}
+          <Route element={ <ProtectedRoutes allowedRoles={['resident']} /> }>
+             {/* Account */}
+             <Route path="resident/account_info" element={<ResidentAccountInfo />} />
+             {/* Profile (Redirect handled by menu, directly use edit) */}
+             <Route path="resident/profile/edit" element={<ResidentProfileEdit />} />
+             {/* Fee */}
+             <Route path="resident/fee/list" element={<ResidentFeeList />} />
+             <Route path="resident/fee/invoice_info/:id" element={<ResidentFeeInvoiceInfo />} />
+             <Route path="resident/fee/payment/:id" element={<ResidentFeePayment />} /> {/* Assuming payment is for a specific invoice */}
+             {/* Notification */}
+             <Route path="resident/notification/list" element={<ResidentNotificationList />} />
+             {/* Report */}
+             <Route path="resident/report/send" element={<ResidentReportSend />} />
+             <Route path="resident/report/list" element={<ResidentReportList />} />
+
+             {/* Auto-redirect for /resident/profile */}
+             <Route path="resident/profile" element={<ResidentProfileEdit />} />
           </Route>
 
           {/* ... các route cho Kế toán và Cư dân ... */}

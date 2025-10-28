@@ -34,6 +34,9 @@ import PeopleIcon from '@mui/icons-material/People';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'; // For Profile/Account
+import VpnKeyIcon from '@mui/icons-material/VpnKey'; // For Account Info
+//import PaymentIcon from '@mui/icons-material/Payment'; // For Fee Payment
 
 import sidebarBackground from '../../assets/bluemoon-background.jpg';
 //import { theme } from '../../theme/theme';
@@ -53,6 +56,16 @@ const bodMenuItems = [
 const accountantMenuItems = [
   { text: 'Công nợ', icon: <ReceiptLongIcon />, path: '/accountance/fee/list' },
   { text: 'Thiết lập', icon: <SettingsIcon />, path: '/accountance/fee/setup' },
+];
+
+// --- THÊM MỚI: Resident Menu ---
+const residentMenuItems = [
+    // Redirect /resident/profile to /resident/profile/edit for simplicity
+    { text: 'Thông tin Cá nhân', icon: <AccountCircleIcon />, path: '/resident/profile/edit' },
+    { text: 'Tài khoản', icon: <VpnKeyIcon />, path: '/resident/account_info' },
+    { text: 'Công nợ', icon: <ReceiptLongIcon />, path: '/resident/fee/list' },
+    { text: 'Thông báo', icon: <NotificationsIcon />, path: '/resident/notification/list' },
+    { text: 'Báo cáo Sự cố', icon: <ReportProblemIcon />, path: '/resident/report/list' }, // Link to list first
 ];
 
 export default function MainLayout() {
@@ -75,6 +88,8 @@ export default function MainLayout() {
         return bodMenuItems;
       case 'accountance':
         return accountantMenuItems;
+      case 'resident': // <-- THÊM CASE NÀY
+        return residentMenuItems;
       default:
         return []; // Hoặc menu mặc định cho resident
     }

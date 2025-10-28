@@ -38,7 +38,7 @@ axiosClient.interceptors.response.use(
       if (localStorage.getItem('token') || window.location.pathname !== '/signin') {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = '/signin';
+        window.location.replace('/signin');
       }
     return Promise.reject(error);
   }
