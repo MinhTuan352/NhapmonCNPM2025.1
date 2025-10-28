@@ -9,6 +9,9 @@ import AdminList from '../pages/BOD/AdminManagement/AdminList';
 import NotFound from '../pages/errors/NotFound';
 import AdminCreate from '../pages/BOD/AdminManagement/AdminCreate.tsx';
 import AdminProfile from '../pages/BOD/AdminManagement/AdminProfile';
+import ResidentList from '../pages/BOD/ResidentManagement/ResidentList';
+import ResidentCreate from '../pages/BOD/ResidentManagement/ResidentCreate';
+import ResidentProfile from '../pages/BOD/ResidentManagement/ResidentProfile';
 
 export default function AppRoutes() {
   return (
@@ -28,10 +31,12 @@ export default function AppRoutes() {
             }
           >
             <Route path="bod/admin/list" element={<AdminList />} />
-
-            {/* --- THÊM MỚI (Yêu cầu 1.2) --- */}
             <Route path="bod/admin/profile/create" element={<AdminCreate />} />
             <Route path="bod/admin/profile/:id" element={<AdminProfile />} />
+
+            <Route path="bod/resident/list" element={<ResidentList />} />
+            <Route path="bod/resident/profile/create" element={<ResidentCreate />} />
+            <Route path="bod/resident/profile/:id" element={<ResidentProfile />} />
 
             {/* ... các route bod khác ... */}
           </Route>
