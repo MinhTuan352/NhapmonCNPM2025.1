@@ -16,6 +16,8 @@ import FeeList from '../pages/BOD/FeeManagement/FeeList';
 import NotificationList from '../pages/BOD/NotificationManagement/NotificationList';
 import NotificationCreate from '../pages/BOD/NotificationManagement/NotificationCreate';
 import NotificationDetail from '../pages/BOD/NotificationManagement/NotificationDetail';
+import ReportList from '../pages/BOD/ReportManagement/ReportList';
+import ReportDetail from '../pages/BOD/ReportManagement/ReportDetail';
 
 export default function AppRoutes() {
   return (
@@ -47,6 +49,9 @@ export default function AppRoutes() {
             <Route path="bod/notification/list" element={<NotificationList />} />
             <Route path="bod/notification/create" element={<NotificationCreate />} />
             <Route path="bod/notification/detail/:id" element={<NotificationDetail />} />
+
+            <Route path="bod/report/list" element={<ReportList />} />
+            <Route path="bod/report/list/detail/:id" element={<ReportDetail />} />
             
             {/* ... các route bod khác ... */}
           </Route>

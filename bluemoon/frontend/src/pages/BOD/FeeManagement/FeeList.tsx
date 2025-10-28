@@ -411,7 +411,7 @@ export default function FeeList() {
                     '&.MuiDataGrid-root': {
                     p: 2,
                     },
-                    minWidth: '1540px',
+                    minWidth: '900px',
                 }}
             />
             </Paper>

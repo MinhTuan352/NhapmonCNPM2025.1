@@ -7,6 +7,7 @@ import {
   IconButton,
   Tooltip,
   Chip, // --- THÊM MỚI ---
+  Grid,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { DataGrid, type GridColDef, type GridRowsProp } from '@mui/x-data-grid';
@@ -162,55 +163,56 @@ export default function NotificationList() {
   return (
     <>
       {/* --- 1. TIÊU ĐỀ + NÚT TẠO MỚI --- */}
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: 3,
-        }}
-      >
-        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-          LỊCH SỬ THÔNG BÁO
-        </Typography>
-        <Button
-          variant="contained"
-          onClick={handleCreateNotification} // <-- Yêu cầu 1c
-        >
-          Tạo thông báo
-        </Button>
-      </Box>
-
-      {/* --- 2. BẢNG DỮ LIỆU (Giống FeeList) --- */}
-      <Box sx={{ width: '100%', overflowX: 'auto' }}>
-        <Paper sx={{ 
-          height: '100%', 
-          width: dynamicPaperWidth, 
-          borderRadius: 3,
-          display: 'flex',
-          flexDirection: 'column',
+      <Grid container spacing={2}>
+        <Grid sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
         }}>
-          <DataGrid
-            rows={mockNotifications}
-            columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: { pageSize: 10, page: 0 },
-              },
-            }}
-            pageSizeOptions={[10, 25, 50]}
-            disableRowSelectionOnClick
-            sx={{
-              border: 0,
-              '& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within': {
-                outline: 'none',
-              },
-              '&.MuiDataGrid-root': { p: 2 },
-              minWidth: '900px', // Đảm bảo bảng không bị vỡ
-            }}
-          />
-        </Paper>
-      </Box>
+            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                LỊCH SỬ THÔNG BÁO
+            </Typography>
+            <Button
+                variant="contained"
+                onClick={handleCreateNotification} // <-- Yêu cầu 1c
+                >
+                Tạo thông báo
+            </Button>
+        </Grid>
+
+        <Grid>
+            <Paper
+            sx={{ 
+                height: '100%', 
+                width: dynamicPaperWidth, 
+                borderRadius: 3,
+                display: 'flex',
+                flexDirection: 'column',
+            }}>
+                <DataGrid
+                    rows={mockNotifications}
+                    columns={columns}
+                    initialState={{
+                    pagination: {
+                        paginationModel: { pageSize: 10, page: 0 },
+                    },
+                    }}
+                    pageSizeOptions={[10, 25, 50]}
+                    disableRowSelectionOnClick
+                    sx={{
+                    border: 0,
+                    '& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within': {
+                        outline: 'none',
+                    },
+                    '&.MuiDataGrid-root': { p: 2 },
+                    minWidth: '900px', // Đảm bảo bảng không bị vỡ
+                    }}
+                />
+            </Paper>
+        </Grid>
+        
+      </Grid>
     </>
   );
 }
