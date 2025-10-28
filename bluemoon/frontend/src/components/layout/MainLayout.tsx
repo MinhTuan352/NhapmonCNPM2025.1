@@ -21,6 +21,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react'; // --- THÊM MỚI ---
 import { alpha } from '@mui/material/styles'; // --- THÊM MỚI ---
 import { useAuth } from '../../contexts/AuthContext'; // --- THÊM MỚI ---
+import { LayoutContext } from '../../contexts/LayoutContext';
 
 // --- THÊM MỚI CÁC ICON ---
 import MenuIcon from '@mui/icons-material/Menu';
@@ -81,6 +82,7 @@ export default function MainLayout() {
   };
 
   return (
+  <LayoutContext.Provider value={{ isSidebarCollapsed: isCollapsed }}>
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       
@@ -313,6 +315,7 @@ export default function MainLayout() {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
           }),
+          minWidth: 0,
         }}
       >
         <Toolbar /> {/* Thêm khoảng trống bằng Header */}
@@ -321,5 +324,7 @@ export default function MainLayout() {
         <Outlet />
       </Box>
     </Box>
+  </LayoutContext.Provider>  
+    
   );
 }

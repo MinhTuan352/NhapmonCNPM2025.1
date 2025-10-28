@@ -12,6 +12,7 @@ import AdminProfile from '../pages/BOD/AdminManagement/AdminProfile';
 import ResidentList from '../pages/BOD/ResidentManagement/ResidentList';
 import ResidentCreate from '../pages/BOD/ResidentManagement/ResidentCreate';
 import ResidentProfile from '../pages/BOD/ResidentManagement/ResidentProfile';
+import FeeList from '../pages/BOD/FeeManagement/FeeList';
 
 export default function AppRoutes() {
   return (
@@ -37,6 +38,8 @@ export default function AppRoutes() {
             <Route path="bod/resident/list" element={<ResidentList />} />
             <Route path="bod/resident/profile/create" element={<ResidentCreate />} />
             <Route path="bod/resident/profile/:id" element={<ResidentProfile />} />
+
+            <Route path="bod/fee/list" element={<FeeList />} />
 
             {/* ... các route bod khác ... */}
           </Route>
