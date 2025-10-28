@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import MainLayout from '../components/layout/MainLayout';
 import ProtectedRoutes from './ProtectedRoutes'; // Import
 
-// Import các trang
+// Import các trang BOD
 import SignIn from '../pages/Auth/SignIn';
 import AdminList from '../pages/BOD/AdminManagement/AdminList';
 import NotFound from '../pages/errors/NotFound';
@@ -18,6 +18,19 @@ import NotificationCreate from '../pages/BOD/NotificationManagement/Notification
 import NotificationDetail from '../pages/BOD/NotificationManagement/NotificationDetail';
 import ReportList from '../pages/BOD/ReportManagement/ReportList';
 import ReportDetail from '../pages/BOD/ReportManagement/ReportDetail';
+
+// --- Import các trang Kế toán ---
+import AccountantFeeList from '../pages/Accountant/FeeManagement/AccountantFeeList.tsx';
+import AccountantFeeInvoice from '../pages/Accountant/FeeManagement/AccountantFeeInvoice.tsx';
+import AccountantFeeInvoiceCreate from '../pages/Accountant/FeeManagement/AccountantFeeInvoiceCreate.tsx';
+import AccountantFeeInvoiceEdit from '../pages/Accountant/FeeManagement/AccountantFeeInvoiceEdit.tsx';
+import AccountantSetup from '../pages/Accountant/Setup/AccountantSetup.tsx';
+import AccountantFeeSetupList from '../pages/Accountant/Setup/FeeSetupList.tsx';
+import AccountantFeeSetupCreate from '../pages/Accountant/Setup/FeeSetupCreate.tsx';
+import AccountantFeeSetupEdit from '../pages/Accountant/Setup/FeeSetupEdit.tsx';
+import AccountantPaymentSetupList from '../pages/Accountant/Setup/PaymentSetupList.tsx';
+import AccountantPaymentSetupCreate from '../pages/Accountant/Setup/PaymentSetupCreate.tsx';
+import AccountantPaymentSetupEdit from '../pages/Accountant/Setup/PaymentSetupEdit.tsx';
 
 export default function AppRoutes() {
   return (
@@ -54,6 +67,28 @@ export default function AppRoutes() {
             <Route path="bod/report/list/detail/:id" element={<ReportDetail />} />
             
             {/* ... các route bod khác ... */}
+          </Route>
+
+          {/* === ACCOUNTANT Routes (THÊM MỚI) === */}
+          <Route 
+            element={
+              <ProtectedRoutes allowedRoles={['accountance']} />
+            }
+          >
+            {/* Công nợ */}
+            <Route path="accountance/fee/list" element={<AccountantFeeList />} />
+            <Route path="accountance/fee/list/invoice/:id" element={<AccountantFeeInvoice />} />
+            <Route path="accountance/fee/list/invoice/create" element={<AccountantFeeInvoiceCreate />} />
+            <Route path="accountance/fee/list/invoice/edit/:id" element={<AccountantFeeInvoiceEdit />} />
+            
+            {/* Thiết lập */}
+            <Route path="accountance/fee/setup" element={<AccountantSetup />} />
+            <Route path="accountance/fee/setup/feeSetup" element={<AccountantFeeSetupList />} />
+            <Route path="accountance/fee/setup/feeSetup/create" element={<AccountantFeeSetupCreate />} />
+            <Route path="accountance/fee/setup/feeSetup/edit/:id" element={<AccountantFeeSetupEdit />} />
+            <Route path="accountance/fee/setup/paymentSetup" element={<AccountantPaymentSetupList />} />
+            <Route path="accountance/fee/setup/paymentSetup/create" element={<AccountantPaymentSetupCreate />} />
+            <Route path="accountance/fee/setup/paymentSetup/edit/:id" element={<AccountantPaymentSetupEdit />} />
           </Route>
 
           {/* ... các route cho Kế toán và Cư dân ... */}

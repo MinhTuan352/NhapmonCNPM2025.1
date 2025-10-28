@@ -18,10 +18,11 @@ import {
   InputBase, // --- THÊM MỚI ---
 } from '@mui/material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { useState } from 'react'; // --- THÊM MỚI ---
+import { useState, useMemo } from 'react'; // --- THÊM MỚI ---
 import { alpha } from '@mui/material/styles'; // --- THÊM MỚI ---
 import { useAuth } from '../../contexts/AuthContext'; // --- THÊM MỚI ---
 import { LayoutContext } from '../../contexts/LayoutContext';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 // --- THÊM MỚI CÁC ICON ---
 import MenuIcon from '@mui/icons-material/Menu';
@@ -41,12 +42,17 @@ const drawerWidth = 240; // Chiều rộng của Sidebar
 const collapsedWidth = 72; // Chiều rộng khi thu gọn
 
 // Danh sách menu [cite: 8]
-const menuItems = [
+const bodMenuItems = [
   { text: 'QTV', icon: <AdminPanelSettingsIcon />, path: '/bod/admin/list' }, // 
   { text: 'Cư dân', icon: <PeopleIcon />, path: '/bod/resident/list' }, // [cite: 28]
   { text: 'Công nợ', icon: <ReceiptLongIcon />, path: '/bod/fee/list' }, // [cite: 45]
   { text: 'Thông báo', icon: <NotificationsIcon />, path: '/bod/notification/list' }, // [cite: 47]
   { text: 'Sự cố', icon: <ReportProblemIcon />, path: '/bod/report/list' }, // [cite: 48]
+];
+
+const accountantMenuItems = [
+  { text: 'Công nợ', icon: <ReceiptLongIcon />, path: '/accountance/fee/list' },
+  { text: 'Thiết lập', icon: <SettingsIcon />, path: '/accountance/fee/setup' },
 ];
 
 export default function MainLayout() {
@@ -62,6 +68,18 @@ export default function MainLayout() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
 
+  // --- CẬP NHẬT: Quyết định menu nào sẽ hiển thị ---
+  const menuItems = useMemo(() => {
+    switch (user?.role) {
+      case 'bod':
+        return bodMenuItems;
+      case 'accountance':
+        return accountantMenuItems;
+      default:
+        return []; // Hoặc menu mặc định cho resident
+    }
+  }, [user?.role]);
+  
   // --- THÊM MỚI --- (Handlers)
   const handleSidebarToggle = () => {
     setIsCollapsed(!isCollapsed);
