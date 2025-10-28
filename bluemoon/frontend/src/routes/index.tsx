@@ -13,6 +13,9 @@ import ResidentList from '../pages/BOD/ResidentManagement/ResidentList';
 import ResidentCreate from '../pages/BOD/ResidentManagement/ResidentCreate';
 import ResidentProfile from '../pages/BOD/ResidentManagement/ResidentProfile';
 import FeeList from '../pages/BOD/FeeManagement/FeeList';
+import NotificationList from '../pages/BOD/NotificationManagement/NotificationList';
+import NotificationCreate from '../pages/BOD/NotificationManagement/NotificationCreate';
+import NotificationDetail from '../pages/BOD/NotificationManagement/NotificationDetail';
 
 export default function AppRoutes() {
   return (
@@ -41,6 +44,10 @@ export default function AppRoutes() {
 
             <Route path="bod/fee/list" element={<FeeList />} />
 
+            <Route path="bod/notification/list" element={<NotificationList />} />
+            <Route path="bod/notification/create" element={<NotificationCreate />} />
+            <Route path="bod/notification/detail/:id" element={<NotificationDetail />} />
+            
             {/* ... các route bod khác ... */}
           </Route>
 
