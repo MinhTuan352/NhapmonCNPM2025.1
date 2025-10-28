@@ -1,4 +1,3 @@
-// src/pages/BOD/FeeManagement/FeeList.tsx
 import {
   Box,
   Typography,
